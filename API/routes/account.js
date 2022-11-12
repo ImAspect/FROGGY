@@ -15,34 +15,37 @@ module.exports = (app, db) => {
         }
 
         if (account.length > 0) {
-            res.json({ status: 400, msg: 'Username already registered !' })
+            return res.json({ status: 400, msg: 'Username already registered !' })
+        }
+
+        if (!req.body.username.match('^[a-z0-9A-Z]{3,16}$')) {
+            return res.json({ status: 401, msg: 'Username require 3 min or 16 characters maximum and cannot contain special characters !' })
         }
 
         if (accountEmail.length > 0) {
-            res.json({ status: 401, msg: 'Email already registered !' })
+            return res.json({ status: 402, msg: 'Email already registered !' })
         }
 
         if (!validateEmail(req.body.email) || validateEmail(req.body.email) === false) {
-            res.json({ status: 402, msg: 'Email format not valid !' })
-        }
-        
-        if (req.body.password.length < 8) {
-            res.json({ status: 403, msg: 'Password require 8 min chars !' })
+            return res.json({ status: 403, msg: 'Email format not valid !' })
         }
 
-        if (account.length === 0 && accountEmail.length === 0 && validateEmail(req.body.email) && req.body.password.length >= 8) {
-            const username = req.body.username
-            const email = req.body.email
-            const password = req.body.password
-            const salt = crypto.randomBytes(32)
-            const verifier = await createVerifier(username, password, salt)
-            const result = await accountModels.accountCreate(username, email, salt, verifier)
-
-            if (result.code) {
-                return res.json({ status: 500, err: result.code })
-            }
-
-            res.json({ status: 200, msg: 'Account create with success !' })
+        if (req.body.password.length < 8 || req.body.password.length > 16) {
+            return res.json({ status: 404, msg: 'Password require 8 min or 16 max chars !' })
         }
+
+        const username = req.body.username
+        const email = req.body.email
+        const password = req.body.password
+        const salt = crypto.randomBytes(32)
+        const verifier = await createVerifier(username, password, salt)
+        const result = await accountModels.accountCreate(username, email, salt, verifier)
+
+        if (result.code) {
+            return res.json({ status: 500, err: result.code })
+        }
+
+        return res.json({ status: 200, msg: 'Account create with success !' })
+
     })
 }

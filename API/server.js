@@ -16,7 +16,7 @@ const accountRoutes = require('./routes/account')
 // ON CRÉER UNE NOUVELLE CONNEXION MYSQL
 mysql.createConnection({
     host: config.get('mysql.host'),
-    database: config.get('mysql.database'),
+    database: config.get('mysql.authDatabase'),
     user: config.get('mysql.user'),
     password: config.get('mysql.password'),
     port: config.get('mysql.port')
@@ -25,7 +25,7 @@ mysql.createConnection({
     setInterval(async function () {
         let res = await db.query('SELECT 1')
     }, 10000)
-    console.log('DATABASE : ' + config.get('mysql.database') + ' [CONNECTED]')
+    console.log('DATABASE [CONNECTED]')
     // ON INITIALISE NOTRE ROUTE RACINE
     app.get('/', (req, res, next) => {
         res.json({ msg: 'API [ONLINE]', status: 200 })
