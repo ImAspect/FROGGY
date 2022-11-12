@@ -1,0 +1,6 @@
+BOT/node_modules
+BOT/package-lock.json
+BOT/config.json
+API/node_modules
+API/package-lock.json
+API/config/*
