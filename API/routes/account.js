@@ -38,8 +38,8 @@ module.exports = (app, db) => {
         const email = req.body.email
         const password = req.body.password
         const salt = crypto.randomBytes(32)
-        const verifier = await createVerifier(username, password, salt)
-        const result = await accountModels.accountCreate(username, email, salt, verifier)
+        const verifier = await createVerifier(username.toUpperCase(), password, salt)
+        const result = await accountModels.accountCreate(username.toUpperCase(), email, salt, verifier)
 
         if (result.code) {
             return res.json({ status: 500, err: result.code })
@@ -47,5 +47,36 @@ module.exports = (app, db) => {
 
         return res.json({ status: 200, msg: 'Account create with success !' })
 
+    })
+
+    app.post('/api/account/login', async (req, res, next) => {
+        const account = await accountModels.getAccountByUsername(req.body.username)
+
+        if (account.length == 0) {
+            return res.json({ status: 400, msg: 'Account not registered !' })
+        }
+
+        const verifier = await createVerifier(req.body.username.toUpperCase(), req.body.password, account[0].salt)
+
+        if (JSON.stringify(account[0].verifier) != JSON.stringify(verifier)) {
+            return res.json({ status: 401, msg: 'Bad password !' })
+        }
+        const result = await accountModels.accountLogin(account[0].id, req.body.discordId)
+
+        if (result.code) {
+            return res.json({ status: 500, err: result.code })
+        }
+
+        return res.json({ status: 200, msg: 'Account login with success !', account: account[0] })
+    })
+
+    app.get('/api/account/discord/:discordId', async (req, res, next) => {
+        const result = await accountModels.getAccountVerifiedByDiscordId(req.params.discordId)
+
+        if (result.code) {
+            return res.json({ status: 500, err: result.code })
+        }
+
+        return res.json({ status: 200, result: result[0] })
     })
 }

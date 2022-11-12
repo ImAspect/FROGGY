@@ -14,6 +14,16 @@ class accountModels {
             })
     }
 
+	static async accountLogin(accountId, discordId) {
+		return db.query('INSERT INTO account_discord (accountId, discordId, verified) VALUES (?, ?, ?)', [accountId, discordId, 1])
+			.then((result) => {
+				return result
+			})
+			.catch((err) => {
+				return err
+			})
+	}
+
 	static async getAccountByUsername(username) {
 		return db.query('SELECT * FROM account WHERE username = ?', [username])
 		.then((result) => {
@@ -28,6 +38,16 @@ class accountModels {
 		return db.query('SELECT * FROM account WHERE email = ?', [email])
 		.then((result) => {
 		    return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
+
+	static async getAccountVerifiedByDiscordId(discordId) {
+		return db.query('SELECT verified FROM account_discord WHERE discordId = ?', [JSON.parse(discordId)])
+		.then((result) => {
+			return result
 		})
 		.catch((err) => {
 			return err
