@@ -1,16 +1,62 @@
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const moment = require('moment')
 moment.locale('fr')
-const { getCharacterByGuid } = require('../Api/account')
+const { getCharacterByGuid, getTicketById, getAccountVerifiedByDiscordId, getAccountIdByCharacterGuid, sendResponseToTicket } = require('../Api/account')
 const { getClassByGender, getRaceByGender } = require('../custom_modules/getByGender')
 const { convertSecondsToTime } = require('../custom_modules/convertSecondsToTime')
 const { convertMoney } = require('../custom_modules/convertMoney')
+const { soapCommand } = require('../custom_modules/soapCommand')
+const { EMBED_COLOR_TRANSPARENT } = require('../config.json')
 
 module.exports = {
   name: "interactionCreate",
   emiter: "on",
   run: async (client, interaction) => {
-    if (!interaction.isChatInputCommand() && !interaction.isSelectMenu() && !interaction.isModalSubmit()) return;
+    if (!interaction.isChatInputCommand() && !interaction.isSelectMenu() && !interaction.isModalSubmit() && !interaction.isButton()) return
+
+    if (interaction.isButton()) {
+      const interactionCustomId = interaction.customId
+      const ticketSplit = interactionCustomId.split("_")
+      const ticketId = ticketSplit[2]
+      if (interaction.customId === 'ticket_assign') {
+        console.log('assign')
+      } else if (interaction.customId === `ticket_respond_${ticketId}`) {
+        const modal = new ModalBuilder()
+          .setCustomId(`response_to_${ticketId}`)
+          .setTitle('RÉPONDRE AU TICKET')
+
+        const respond = new TextInputBuilder()
+          .setCustomId(`response_ticket_${ticketId}`)
+          .setLabel("Saisissez une réponse à envoyer au joueur !")
+          .setStyle(TextInputStyle.Short)
+
+        const responseToTicket = new ActionRowBuilder().addComponents(respond)
+
+        modal.addComponents(responseToTicket)
+        await interaction.showModal(modal)
+      }
+    }
+
+    if (interaction.isModalSubmit()) {
+      const interactionCustomId = interaction.customId
+      const ticketSplit = interactionCustomId.split("_")
+      const ticketId = ticketSplit[2]
+      if (interaction.customId === `response_to_${ticketId}`) {
+        const responseToTicket = interaction.fields.getTextInputValue(`response_ticket_${ticketId}`)
+        soapCommand(`ticket response append ${ticketId} ${responseToTicket}`)
+        soapCommand(`ticket complete ${ticketId}`)
+        soapCommand('reload gm_tickets')
+        const ticketResponse = new EmbedBuilder()
+          .setColor(EMBED_COLOR_TRANSPARENT)
+          .setDescription('\`La réponse à bien été envoyer\`')
+          .addFields(
+            { name: 'Ticket n°', value: `• \`${ticketId}\``, inline: false },
+            { name: 'Réponse', value: `• \`${responseToTicket}\``, inline: false }
+          )
+          .setTimestamp()
+        await interaction.reply({ embeds: [ticketResponse], ephemeral: true })
+      }
+    }
 
     if (interaction.isChatInputCommand()) {
       const command = client.slashCommands.get(interaction.commandName)
@@ -23,7 +69,7 @@ module.exports = {
           if (res.status === 200) {
             const date = new Date(res.result[0].logout_time * 1000)
             const characterEmbed = new EmbedBuilder()
-              .setColor("#666666")
+              .setColor(EMBED_COLOR_TRANSPARENT)
               .addFields(
                 { name: 'Nom', value: `• \`${res.result[0].name}\``, inline: false },
                 { name: 'Points de vie', value: `• \`${res.result[0].health}\``, inline: false },
@@ -39,6 +85,85 @@ module.exports = {
             await interaction.reply({ embeds: [characterEmbed], ephemeral: true })
           }
         })
+    }
+
+    if (interaction.customId === 'select_tickets') {
+
+      let verified = []
+
+      await getAccountVerifiedByDiscordId(interaction.member.id)
+        .then((res) => {
+          if (res.status === 200) {
+            verified.push(res.result)
+          }
+        })
+
+      if (verified[0] != undefined) {
+        getTicketById(interaction.values[0])
+          .then(async (res) => {
+            if (res.status === 200) {
+              const unix_timestamp = res.result[0].createTime
+              const date = new Date(unix_timestamp * 1000)
+              const ticketEmbed = new EmbedBuilder()
+                .setColor(EMBED_COLOR_TRANSPARENT)
+                .addFields(
+                  { name: 'Ticket N°', value: `• \`${res.result[0].id}\``, inline: false },
+                  { name: 'Ouvert par', value: `• \`${res.result[0].name}\``, inline: false },
+                  { name: 'Description', value: `• \`${res.result[0].description}\``, inline: false },
+                  { name: 'Statut', value: `• \`${res.result[0].assignedTo === 0 ? '`Pas assigné`' : '`Assigné`'}\``, inline: false },
+                  { name: 'Créer le', value: `• \`${moment(date).format('LLLL')}\``, inline: false },
+                )
+                .setTimestamp()
+
+              const ticketButtons = new ActionRowBuilder()
+              {
+                res.result[0].assignedTo > 0 ?
+                  ticketButtons.addComponents(
+                    new ButtonBuilder()
+                      .setCustomId('ticket_assign')
+                      .setLabel('M\'assigner le ticket')
+                      .setStyle(ButtonStyle.Primary)
+                      .setDisabled(true),
+                  )
+                  :
+                  ticketButtons.addComponents(
+                    new ButtonBuilder()
+                      .setCustomId('ticket_assign')
+                      .setLabel('M\'assigner le ticket')
+                      .setStyle(ButtonStyle.Primary),
+                  )
+              }
+              let account;
+
+              await getAccountIdByCharacterGuid(res.result[0].assignedTo)
+                .then((res) => {
+                  if (res.status === 200) {
+                    account = res.result
+                  }
+                })
+              {
+                account[0] !== undefined ?
+                  account[0].id === verified[0].accountId &&
+                  ticketButtons.addComponents(
+                    new ButtonBuilder()
+                      .setCustomId(`ticket_respond_${res.result[0].id}`)
+                      .setLabel('Répondre au ticket')
+                      .setStyle(ButtonStyle.Primary)
+                      .setDisabled(false),
+                  )
+                  :
+                  ticketButtons.addComponents(
+                    new ButtonBuilder()
+                      .setCustomId('ticket_respond')
+                      .setLabel('Répondre au ticket')
+                      .setStyle(ButtonStyle.Primary)
+                      .setDisabled(true),
+                  )
+              }
+              await interaction.reply({ embeds: [ticketEmbed], components: [ticketButtons], ephemeral: true })
+            }
+          })
+      }
     }
   }
 }

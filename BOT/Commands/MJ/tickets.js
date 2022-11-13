@@ -1,4 +1,4 @@
-const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
+const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
 const { getAccountVerifiedByDiscordId, getAccountAccessById, getAllTickets } = require('../../api/account')
 const { SERVER_NAME, ROLE_MJ_ID, ROLE_ADMIN_ID, EMBED_COLOR_TRANSPARENT } = require('../../config.json')
 
@@ -18,30 +18,45 @@ module.exports = {
 				})
 
 			if (verified[0] != undefined) {
-				let accountAccess = []
+				let accountAccess
 
 				await getAccountAccessById(verified[0].accountId)
 					.then((res) => {
 						if (res.status === 200) {
-							accountAccess.push(res.result)
+							accountAccess = res.result
 						}
 					})
-				if (accountAccess[0] != undefined) {
+				if (accountAccess[0] !== undefined) {
 					await getAllTickets()
 						.then(async (res) => {
 							if (res.status === 200) {
-								if (res.result != undefined) {
+								if (res.result !== undefined) {
 									const ticketsEmbed = new EmbedBuilder()
 										.setColor(EMBED_COLOR_TRANSPARENT)
 										.setDescription('**Liste des tickets actuellement ouverts !**')
 										.setTimestamp()
-									res.result.map(async (x, index) => {
-										if (res.status === 200) {
-											ticketsEmbed.addFields({ name: `Ticket n° ${x.id}`, value: `**Joueur** \`${x.name}\`\n**Description** \`${x.description}\`\n${x.assignedTo === 0 ? '**Statut** `Pas assigné`' : '**Statut** `Assigné`'}`, inline: false })
-										}
+									res.result.map(async (x) => {
+										ticketsEmbed.addFields({ name: `Ticket n° ${x.id}`, value: `**Joueur** \`${x.name}\`\n**Description** \`${x.description}\`\n${x.assignedTo === 0 ? '**Statut** `Pas assigné`' : '**Statut** `Assigné`'}`, inline: false })
 									})
 
-									await interaction.reply({ embeds: [ticketsEmbed], ephemeral: true })
+									const selectTickets = new ActionRowBuilder()
+										.addComponents(
+											new SelectMenuBuilder()
+												.setCustomId('select_tickets')
+												.setPlaceholder('Effectuer une action sur un ticket !')
+												.addOptions(
+													res.result.map((x, index) => {
+														return {
+															label: `Ticket ouvert par ${x.name}`,
+															description: `Ticket n°${x.id}`,
+															value: `${x.id}`,
+														}
+													})
+												),
+										);
+
+
+									await interaction.reply({ embeds: [ticketsEmbed], components: [selectTickets] , ephemeral: true })
 								} else {
 									const noTicketsEmbed = new EmbedBuilder()
 										.setColor(EMBED_COLOR_TRANSPARENT)

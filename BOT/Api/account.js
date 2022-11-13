@@ -30,7 +30,7 @@ const getAllCharactersByDiscordId = (data) => {
 }
 
 const getCharacterByGuid = (data) => {
-    return axios.get(API_URL+`/api/account/character/${data}`)
+    return axios.get(API_URL+`/api/character/${data}`)
     .then((response) => {
         return response.data
     })
@@ -50,6 +50,27 @@ const getAllTickets = () => {
     })
 }
 
+const getTicketById = (data) => {
+    return axios.get(API_URL+`/api/characters/ticket/${data}`)
+    .then((response) => {
+        return response.data
+    })
+}
+
+const getAccountIdByCharacterGuid = (data) => {
+    return axios.get(API_URL+`/api/account/character/${data}`)
+    .then((response) => {
+        return response.data
+    })
+}
+
+const sendResponseToTicket = (data) => {
+    return axios.put(API_URL+'/api/characters/ticket/response', data)
+    .then((response) => {
+        return response.data
+    })
+}
+
 module.exports = {
     createAccount,
     loginAccount,
@@ -57,5 +78,8 @@ module.exports = {
     getAllCharactersByDiscordId,
     getCharacterByGuid,
     getAccountAccessById,
-    getAllTickets
+    getAllTickets,
+    getTicketById,
+    getAccountIdByCharacterGuid,
+    sendResponseToTicket
 }

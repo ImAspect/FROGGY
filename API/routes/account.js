@@ -95,7 +95,7 @@ module.exports = (app, db) => {
         return res.json({ status: 200, result: getCharactersByAccountId })
     })
 
-    app.get('/api/account/character/:Guid', async (req, res, next) => {
+    app.get('/api/character/:Guid', async (req, res, next) => {
         const characterModels = require('../models/characters')(db)
         const getCharacterByGuid = await characterModels.getCharacterByGuid(req.params.Guid)
 
@@ -115,5 +115,16 @@ module.exports = (app, db) => {
         }
 
         return res.json({ status: 200, result: getAccountAccessById })
+    })
+
+    app.get('/api/account/character/:guid', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
+        const getAccountIdByCharacterGuid = await accountModels.getAccountIdByCharacterGuid(req.params.guid)
+        
+        if (getAccountIdByCharacterGuid.code) {
+            return res.json({ status: 500, err: getAccountIdByCharacterGuid.code })
+        }
+
+        return res.json({ status: 200, result: getAccountIdByCharacterGuid })
     })
 }

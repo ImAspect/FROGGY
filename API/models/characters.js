@@ -33,4 +33,24 @@ class characterModels {
 			return err
 		})
 	}
+
+	static async getTicketById(id) {
+		return db.query('SELECT * FROM Chars_DEV.gm_ticket WHERE id = ? && completed = 0', [id])
+		.then((result) => {
+			return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
+
+	static async sendResponseToTicket(id, response) {
+		return db.query('UPDATE Chars_DEV.gm_ticket SET response = ?, completed = 1 WHERE id = ?', [response, id])
+		.then((result) => {
+			return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
 }

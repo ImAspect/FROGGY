@@ -63,4 +63,14 @@ class accountModels {
 			return err
 		})
 	}
+
+	static async getAccountIdByCharacterGuid(guid) {
+		return db.query('SELECT a.id FROM account AS a INNER JOIN Chars_DEV.characters as cc WHERE cc.account =  a.id && cc.guid = ?', [guid])
+		.then((result) => {
+			return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
 }
