@@ -22,8 +22,16 @@ const getAccountVerifiedByDiscordId = (data) => {
     })
 }
 
+const getAllCharactersByDiscordId = (data) => {
+    return axios.get(API_URL+`/api/account/characters/${data}`)
+    .then((response) => {
+        return response.data
+    })
+}
+
 module.exports = {
     createAccount,
     loginAccount,
-    getAccountVerifiedByDiscordId
+    getAccountVerifiedByDiscordId,
+    getAllCharactersByDiscordId
 }

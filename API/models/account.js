@@ -45,7 +45,7 @@ class accountModels {
 	}
 
 	static async getAccountVerifiedByDiscordId(discordId) {
-		return db.query('SELECT verified FROM account_discord WHERE discordId = ?', [JSON.parse(discordId)])
+		return db.query('SELECT * FROM account_discord WHERE discordId = ?', [JSON.parse(discordId)])
 		.then((result) => {
 			return result
 		})

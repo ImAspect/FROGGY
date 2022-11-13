@@ -1,9 +1,9 @@
 module.exports = (app, db) => {
     const crypto = require('crypto')
     const { createVerifier } = require('../custom_modules/SRP6')
-    const accountModels = require('../models/account')(db)
 
     app.post('/api/account/add', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
         const account = await accountModels.getAccountByUsername(req.body.username)
         const accountEmail = await accountModels.getAccountByEmail(req.body.email)
         const validateEmail = (email) => {
@@ -50,6 +50,7 @@ module.exports = (app, db) => {
     })
 
     app.post('/api/account/login', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
         const account = await accountModels.getAccountByUsername(req.body.username)
 
         if (account.length == 0) {
@@ -71,6 +72,7 @@ module.exports = (app, db) => {
     })
 
     app.get('/api/account/discord/:discordId', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
         const result = await accountModels.getAccountVerifiedByDiscordId(req.params.discordId)
 
         if (result.code) {
@@ -78,5 +80,18 @@ module.exports = (app, db) => {
         }
 
         return res.json({ status: 200, result: result[0] })
+    })
+
+    app.get('/api/account/characters/:discordId', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
+        const characterModels = require('../models/characters')(db)
+        const getAccountByDiscordId = await accountModels.getAccountVerifiedByDiscordId(req.params.discordId)
+        const getCharactersByAccountId = await characterModels.getCharactersByAccountId(getAccountByDiscordId[0].accountId)
+
+        if (getCharactersByAccountId.code) {
+            return res.json({ status: 500, err: getCharactersByAccountId.code })
+        }
+
+        return res.json({ status: 200, result: getCharactersByAccountId })
     })
 }

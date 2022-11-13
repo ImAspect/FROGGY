@@ -1,5 +1,5 @@
-const { ApplicationCommandType } = require('discord.js')
-const { createAccount, loginAccount, getAccountVerifiedByDiscordId } = require('../../api/account')
+const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
+const { createAccount, loginAccount, getAccountVerifiedByDiscordId, getAllCharactersByDiscordId } = require('../../api/account')
 const { COMMANDS_CHANNEL_ID, SERVER_NAME } = require('../../config.json')
 
 module.exports = {
@@ -50,6 +50,11 @@ module.exports = {
                     type: 3
                 }
             ]
+        },
+        {
+            name: 'characters',
+            description: 'Affiche la liste de vos personnages !',
+            type: 1
         }
     ],
     type: ApplicationCommandType.ChatInput,
@@ -130,17 +135,163 @@ module.exports = {
                     discordId: JSON.parse(interaction.member.id)
                 }
                 loginAccount(data)
-                .then(async (res) => {
-                    if (res.status === 400) {
-                        await interaction.reply({ content: "Le compte n'existe pas ! [❌]", ephemeral: true })
-                    } else if (res.status === 401) {
-                        await interaction.reply({ content: "Le mot de passe est incorrect ! [❌]", ephemeral: true })
-                    } else if (res.status === 200) {
-                        await interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nVous êtes connecté à votre compte **${SERVER_NAME}** [✅]`, ephemeral: true })
-                    }
-                })
+                    .then(async (res) => {
+                        if (res.status === 400) {
+                            await interaction.reply({ content: "Le compte n'existe pas ! [❌]", ephemeral: true })
+                        } else if (res.status === 401) {
+                            await interaction.reply({ content: "Le mot de passe est incorrect ! [❌]", ephemeral: true })
+                        } else if (res.status === 200) {
+                            await interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nVous êtes connecté à votre compte **${SERVER_NAME}** [✅]`, ephemeral: true })
+                        }
+                    })
             } else {
                 await interaction.reply({ content: `Votre compte **${SERVER_NAME}** est déjà connecté ! [✅]`, ephemeral: true })
+            }
+        } else if (interaction.commandName === 'account' && interaction.options._subcommand === 'characters') {
+
+            let verified = []
+
+            const test = await getAccountVerifiedByDiscordId(interaction.member.id)
+                .then((res) => {
+                    if (res.status === 200) {
+                        verified.push(res.result)
+                    }
+                })
+
+            if (verified[0] != undefined) {
+                getAllCharactersByDiscordId(interaction.member.id)
+                    .then(async (res) => {
+                        if (res.status === 200) {
+                            console.log(res.result)
+
+                            function getClassFromGender(genderId, classId) {
+                                switch (genderId) {
+                                    case 0:
+                                        switch (classId) {
+                                            case 1:
+                                                return 'Guerrier'
+                                            case 2:
+                                                return 'Paladin'
+                                            case 3:
+                                                return 'Chasseur'
+                                            case 4:
+                                                return 'Voleur'
+                                            case 5:
+                                                return 'Prêtre'
+                                            case 6:
+                                                return 'Chevalier de la mort'
+                                            case 7:
+                                                return 'Chaman'
+                                            case 8:
+                                                return 'Mage'
+                                            case 9:
+                                                return 'Démoniste'
+                                            case 11:
+                                                return 'Druide'
+                                            default:
+                                                break
+                                        }
+                                    case 1:
+                                        switch (classId) {
+                                            case 1:
+                                                return 'Guerrière'
+                                            case 2:
+                                                return 'Paladin'
+                                            case 3:
+                                                return 'Chasseuse'
+                                            case 4:
+                                                return 'Voleuse'
+                                            case 5:
+                                                return 'Prêtresse'
+                                            case 6:
+                                                return 'Chevalière de la mort'
+                                            case 7:
+                                                return 'Chaman'
+                                            case 8:
+                                                return 'Mage'
+                                            case 9:
+                                                return 'Démoniste'
+                                            case 11:
+                                                return 'Druidesse'
+                                            default:
+                                                break
+                                        }
+                                    default:
+                                        break
+                                }
+                            }
+
+                            function getRaceFromGender(genderId, raceId) {
+                                switch (genderId) {
+                                    case 0:
+                                        switch (raceId) {
+                                            case 1:
+                                                return 'Humain'
+                                            case 2:
+                                                return 'Orc'
+                                            case 3:
+                                                return 'Nain'
+                                            case 4:
+                                                return 'Elfe de la nuit'
+                                            case 5:
+                                                return 'Mort-vivant'
+                                            case 6:
+                                                return 'Tauren'
+                                            case 7:
+                                                return 'Gnome'
+                                            case 8:
+                                                return 'Troll'
+                                            case 10:
+                                                return 'Elfe de sang'
+                                            case 11:
+                                                return 'Draeneï'
+                                            default:
+                                                break
+                                        }
+                                    case 1:
+                                        switch (raceId) {
+                                            case 1:
+                                                return 'Humaine'
+                                            case 2:
+                                                return 'Orque'
+                                            case 3:
+                                                return 'Naine'
+                                            case 4:
+                                                return 'Elfe de la nuit'
+                                            case 5:
+                                                return 'Morte-vivante'
+                                            case 6:
+                                                return 'Taurène'
+                                            case 7:
+                                                return 'Gnome'
+                                            case 8:
+                                                return 'Trollesse'
+                                            case 10:
+                                                return 'Elfe de sang'
+                                            case 11:
+                                                return 'Draeneï'
+                                            default:
+                                                break
+                                        }
+                                    default:
+                                        break
+                                }
+                            }
+
+                            const charactersEmbed = new EmbedBuilder()
+                                .setColor("#666666")
+                                .setDescription('**Liste des personnages de votre compte !**')
+                                .setTimestamp()
+                            res.result.map((x, index) => {
+                                charactersEmbed.addFields({ name: `${x.online === 1 ? '🟢' : '🔴'} ${x.name}`, value: `\`${getRaceFromGender(x.gender, x.race)}\` - \`${getClassFromGender(x.gender, x.class)}\``, inline: false })
+                            })
+
+                            interaction.reply({ embeds: [charactersEmbed], ephemeral: true });
+
+                        }
+                    })
+            } else {
+                await interaction.reply({ content: `Vous n'êtes pas connecté à un compte **${SERVER_NAME}** [❌]\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`, ephemeral: true })
             }
         }
     }
