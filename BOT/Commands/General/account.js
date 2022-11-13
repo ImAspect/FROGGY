@@ -1,7 +1,7 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
 const { createAccount, loginAccount, getAccountVerifiedByDiscordId, getAllCharactersByDiscordId } = require('../../api/account')
 const { getClassByGender, getRaceByGender } = require('../../custom_modules/getByGender')
-const { COMMANDS_CHANNEL_ID, SERVER_NAME } = require('../../config.json')
+const { SERVER_NAME, EMBED_COLOR_TRANSPARENT } = require('../../config.json')
 
 module.exports = {
     name: "account",
@@ -61,10 +61,6 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     run: async (client, interaction) => {
         if (interaction.commandName === 'account' && interaction.options._subcommand === 'create') {
-            if (interaction.channel.id != COMMANDS_CHANNEL_ID && !interaction.member.permissions.has("0x0000000000000008")) {
-                return interaction.reply({ content: 'Vous n\'avez pas la permission d\'effectuer cette commande !', ephemeral: true })
-            }
-
             let username
             let email
             let password
@@ -85,29 +81,56 @@ module.exports = {
                 password: password
             }
             createAccount(data)
-                .then((res) => {
+                .then(async (res) => {
                     if (res.status === 400) {
-                        interaction.reply({ content: "Le nom d'utilisateur que vous avez choisi est déjà utilisé ! [❌]", ephemeral: true })
+                        const status400Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription('Le nom d\'utilisateur que vous avez choisi est déjà utilisé ! [❌]')
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status400Embed], ephemeral: true })
                     } else if (res.status === 401) {
-                        interaction.reply({ content: "Le nom d'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! [❌]", ephemeral: true })
+                        const status401Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription('Le nom d\'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! [❌]')
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status401Embed], ephemeral: true })
                     } else if (res.status === 402) {
-                        interaction.reply({ content: "L'adresse email que vous avez choisie est déjà utilisée ! [❌]", ephemeral: true })
+                        const status402Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription('L\'adresse email que vous avez choisis est déjà utilisée ! [❌]')
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status402Embed], ephemeral: true })
                     } else if (res.status === 403) {
-                        interaction.reply({ content: "Le format de l'adresse email n'est pas valide ! [❌]", ephemeral: true })
+                        const status403Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription('Le format de l\'adresse email n\'est pas valide ! [❌]')
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status403Embed], ephemeral: true })
                     } else if (res.status === 404) {
-                        interaction.reply({ content: "Le mot de passe doit être compris entre 8 et 16 caractères ! [❌]", ephemeral: true })
+                        const status404Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription('Le mot de passe doit être compris entre 8 et 16 caractères ! [❌]')
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status404Embed], ephemeral: true })
                     } else if (res.status === 200) {
-                        interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès [✅]`, ephemeral: true })
+                        const status200Embed = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription("Bravo **" + username.toUpperCase() + `** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès [✅]`)
+                        .setTimestamp()
+
+                        await interaction.reply({ embeds: [status200Embed], ephemeral: true })
                     }
                 })
         } else if (interaction.commandName === 'account' && interaction.options._subcommand === 'login') {
-            if (interaction.channel.id != COMMANDS_CHANNEL_ID && !interaction.member.permissions.has("0x0000000000000008")) {
-                return interaction.reply({ content: 'Vous n\'avez pas la permission d\'effectuer cette commande !', ephemeral: true })
-            }
 
             let verified = []
 
-            const test = await getAccountVerifiedByDiscordId(interaction.member.id)
+            await getAccountVerifiedByDiscordId(interaction.member.id)
                 .then((res) => {
                     if (res.status === 200) {
                         verified.push(res.result)
@@ -152,7 +175,7 @@ module.exports = {
 
             let verified = []
 
-            const test = await getAccountVerifiedByDiscordId(interaction.member.id)
+            await getAccountVerifiedByDiscordId(interaction.member.id)
                 .then((res) => {
                     if (res.status === 200) {
                         verified.push(res.result)
@@ -164,7 +187,7 @@ module.exports = {
                     .then(async (res) => {
                         if (res.status === 200) {
                             const charactersEmbed = new EmbedBuilder()
-                                .setColor("#666666")
+                                .setColor(EMBED_COLOR_TRANSPARENT)
                                 .setDescription('**Liste des personnages de votre compte !**')
                                 .setTimestamp()
                             res.result.map((x, index) => {

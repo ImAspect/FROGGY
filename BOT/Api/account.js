@@ -36,10 +36,26 @@ const getCharacterByGuid = (data) => {
     })
 }
 
+const getAccountAccessById = (data) => {
+    return axios.get(API_URL+`/api/account/access/${data}`)
+    .then((response) => {
+        return response.data
+    })
+}
+
+const getAllTickets = () => {
+    return axios.get(API_URL+`/api/characters/tickets/all`)
+    .then((response) => {
+        return response.data
+    })
+}
+
 module.exports = {
     createAccount,
     loginAccount,
     getAccountVerifiedByDiscordId,
     getAllCharactersByDiscordId,
-    getCharacterByGuid
+    getCharacterByGuid,
+    getAccountAccessById,
+    getAllTickets
 }

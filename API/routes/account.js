@@ -105,4 +105,15 @@ module.exports = (app, db) => {
 
         return res.json({ status: 200, result: getCharacterByGuid })
     })
+
+    app.get('/api/account/access/:id', async (req, res, next) => {
+        const accountModels = require('../models/account')(db)
+        const getAccountAccessById = await accountModels.getAccountAccessById(req.params.id)
+
+        if (getAccountAccessById.code) {
+            return res.json({ status: 500, err: getAccountAccessById.code })
+        }
+
+        return res.json({ status: 200, result: getAccountAccessById })
+    })
 }

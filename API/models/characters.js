@@ -23,4 +23,14 @@ class characterModels {
 			return err
 		})
 	}
+
+	static async getAllTickets() {
+		return db.query('SELECT * FROM Chars_DEV.gm_ticket WHERE completed = 0')
+		.then((result) => {
+			return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
 }

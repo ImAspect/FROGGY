@@ -53,4 +53,14 @@ class accountModels {
 			return err
 		})
 	}
+
+	static async getAccountAccessById(id) {
+		return db.query('SELECT * FROM account_access WHERE id = ?', [id])
+		.then((result) => {
+			return result
+		})
+		.catch((err) => {
+			return err
+		})
+	}
 }
