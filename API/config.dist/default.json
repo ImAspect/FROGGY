@@ -4,6 +4,8 @@
         "user": "USER DB", // USER DB
         "password": "PASSWORD DB", // PASSWORD DB
         "authDatabase": "AUTH DB", // DATABASE AUTH
+        "charsDatabase": "CHARS DB", // DATABASE CHARACTERS
+        "worldDatabase": "WORLD DB", // DATABASE WORLD
         "port": "3306" // PORT DB
     },
     "port": "9100" // NE PAS TOUCHER

@@ -3,6 +3,8 @@ module.exports = (_db) => {
     return accountModels
 }
 
+const config = require('config')
+
 class accountModels {
     static async accountCreate(username, email, salt, verifier) {
         return db.query('INSERT INTO account (username, email, salt, verifier) VALUES (?, ?, ?, ?)', [username, email, salt, verifier])
@@ -65,7 +67,7 @@ class accountModels {
 	}
 
 	static async getAccountIdByCharacterGuid(guid) {
-		return db.query('SELECT a.id FROM account AS a INNER JOIN Chars_DEV.characters as cc WHERE cc.account =  a.id && cc.guid = ?', [guid])
+		return db.query(`SELECT a.id FROM account AS a INNER JOIN ${config.get('mysql.charsDatabase')}.characters as cc WHERE cc.account =  a.id && cc.guid = ?`, [guid])
 		.then((result) => {
 			return result
 		})
