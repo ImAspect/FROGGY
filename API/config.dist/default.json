@@ -1,0 +1,12 @@
+{
+    "mysql": {
+        "host": "HÔTE DB",
+        "user": "USER DB",
+        "password": "PASSWORD DB",
+        "authDatabase": "AUTH DATABASE",
+        "charsDatabase": "CHARACTERS DATABASE",
+        "worldDatabase": "WORLD DATABASE",
+        "port": "3306"
+    },
+    "port": "9100"
+}
