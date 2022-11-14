@@ -64,8 +64,8 @@ const getAccountIdByCharacterGuid = (data) => {
     })
 }
 
-const sendResponseToTicket = (data) => {
-    return axios.put(API_URL+'/api/characters/ticket/response', data)
+const getCharactersByAccountId = (accountId) => {
+    return axios.get(API_URL+`/api/characters/all/${accountId}`)
     .then((response) => {
         return response.data
     })
@@ -81,5 +81,5 @@ module.exports = {
     getAllTickets,
     getTicketById,
     getAccountIdByCharacterGuid,
-    sendResponseToTicket
+    getCharactersByAccountId
 }

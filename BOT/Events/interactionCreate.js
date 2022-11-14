@@ -1,7 +1,7 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, SelectMenuBuilder } = require('discord.js')
 const moment = require('moment')
 moment.locale('fr')
-const { getCharacterByGuid, getTicketById, getAccountVerifiedByDiscordId, getAccountIdByCharacterGuid, sendResponseToTicket } = require('../Api/account')
+const { getCharacterByGuid, getTicketById, getAccountVerifiedByDiscordId, getAccountIdByCharacterGuid, getCharactersByAccountId } = require('../Api/account')
 const { getClassByGender, getRaceByGender } = require('../custom_modules/getByGender')
 const { convertSecondsToTime } = require('../custom_modules/convertSecondsToTime')
 const { convertMoney } = require('../custom_modules/convertMoney')
@@ -14,12 +14,62 @@ module.exports = {
   run: async (client, interaction) => {
     if (!interaction.isChatInputCommand() && !interaction.isSelectMenu() && !interaction.isModalSubmit() && !interaction.isButton()) return
 
+    if (interaction.isSelectMenu()) {
+      if (interaction.customId === 'select_assign_chars') {
+        //soapCommand(`ticket assign {$ticketId} ${interaction.values[0]}`)
+        const interactionCustomId = interaction.values[0]
+        const ticketSplit = interactionCustomId.split("_")
+        const ticketId = ticketSplit[1]
+        const gmAssign = ticketSplit[0]
+
+        soapCommand(`ticket assign ${ticketId} ${gmAssign}`)
+
+        const ticketAssignEmbed = new EmbedBuilder()
+        .setColor(EMBED_COLOR_TRANSPARENT)
+        .setDescription(`**Le ticket n°**\`${ticketId}\` **est maintenant assigné au Maître du jeu** \`${gmAssign}\``)
+        .setTimestamp()
+
+      await interaction.reply({ embeds: [ticketAssignEmbed], ephemeral: true })
+      }
+    }
+
     if (interaction.isButton()) {
       const interactionCustomId = interaction.customId
       const ticketSplit = interactionCustomId.split("_")
       const ticketId = ticketSplit[2]
-      if (interaction.customId === 'ticket_assign') {
-        console.log('assign')
+      if (interaction.customId === `ticket_assign_${ticketId}`) {
+        let verified = []
+
+        await getAccountVerifiedByDiscordId(interaction.member.id)
+          .then((res) => {
+            if (res.status === 200) {
+              verified.push(res.result)
+            }
+          })
+        if (verified[0] != undefined) {
+          await getCharactersByAccountId(verified[0].accountId)
+            .then(async (res) => {
+              if (res.status === 200) {
+                const assignSucces = new ActionRowBuilder()
+                .addComponents(
+                  new SelectMenuBuilder()
+                    .setCustomId('select_assign_chars')
+                    .setPlaceholder('Assigner le ticket à l\'un de vos personnages')
+                    .addOptions(
+                      res.result.map((x, index) => {
+                        return {
+                          label: `${x.name}`,
+                          description: `  `,
+                          value: `${x.name}_${ticketId}`,
+                        }
+                      })
+                    ),
+                );
+
+                await interaction.reply({ components: [assignSucces], ephemeral: true })
+              }
+            })
+        }
       } else if (interaction.customId === `ticket_respond_${ticketId}`) {
         const modal = new ModalBuilder()
           .setCustomId(`response_to_${ticketId}`)
@@ -128,7 +178,7 @@ module.exports = {
                   :
                   ticketButtons.addComponents(
                     new ButtonBuilder()
-                      .setCustomId('ticket_assign')
+                      .setCustomId(`ticket_assign_${res.result[0].id}`)
                       .setLabel('M\'assigner le ticket')
                       .setStyle(ButtonStyle.Primary),
                   )

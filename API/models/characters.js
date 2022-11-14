@@ -44,8 +44,8 @@ class characterModels {
 		})
 	}
 
-	static async sendResponseToTicket(id, response) {
-		return db.query('UPDATE Chars_DEV.gm_ticket SET response = ?, completed = 1 WHERE id = ?', [response, id])
+	static async getCharactersByAccountId(accountId) {
+		return db.query('SELECT guid, name FROM Chars_DEV.characters WHERE account = ?', [accountId])
 		.then((result) => {
 			return result
 		})

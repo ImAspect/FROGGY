@@ -30,7 +30,7 @@ module.exports = {
 					await getAllTickets()
 						.then(async (res) => {
 							if (res.status === 200) {
-								if (res.result !== undefined) {
+								if (res.result[0] !== undefined) {
 									const ticketsEmbed = new EmbedBuilder()
 										.setColor(EMBED_COLOR_TRANSPARENT)
 										.setDescription('**Liste des tickets actuellement ouverts !**')

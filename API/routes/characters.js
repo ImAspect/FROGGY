@@ -21,17 +21,15 @@ module.exports = (app, db) => {
         return res.json({ status: 200, result: result })
     })
 
-    app.put('/api/characters/ticket/response', async (req, res, next) => {
+    app.get('/api/characters/all/:accountId', async (req, res, next) => {
         const characterModels = require('../models/characters')(db)
 
-        const id = req.body.id
-        const response = req.body.response
-        const result = await characterModels.sendResponseToTicket(id, response)
+        const result = await characterModels.getCharactersByAccountId(req.params.accountId)
 
         if (result.code) {
             return res.json({ status: 500, err: result.code })
         }
 
-        return res.json({ status: 200, msg: 'Ticket update with success !' })
+        return res.json({ status: 200, result: result })
     })
 }

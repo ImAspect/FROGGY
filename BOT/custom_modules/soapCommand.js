@@ -1,11 +1,13 @@
+const { SOAP_IP, SOAP_USER, SOAP_PASSWORD, SOAP_PORT } = require('../config.json')
+
 function soapCommand(command) {
 	const http = require('http')
     return new Promise((resolve, reject) => {
 	const req = http.request({
-	    port: 7878,
+	    port: SOAP_PORT,
 	    method: "POST",
-	    hostname: "194.163.178.73",
-	    auth: "Aspect:qsdf123",
+	    hostname: SOAP_IP,
+	    auth: `${SOAP_USER}:${SOAP_PASSWORD}`,
 	    headers: { 'Content-Type': 'application/xml' }
 	}, res=>{
 	    res.on('data', async d => {
