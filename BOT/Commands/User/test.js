@@ -5,6 +5,11 @@ module.exports = {
 	description: "TEST COMMAND",
 	type: ApplicationCommandType.ChatInput,
 	run: async (client, interaction) => {
-		await interaction.reply({ content: 'test', ephemeral: true })
+		const testEmbed = new EmbedBuilder()
+			.setColor(EMBED_COLOR_TRANSPARENT)
+			.setDescription(`\`Test\``)
+			.setTimestamp()
+
+		await interaction.reply({ embeds: [testEmbed], ephemeral: true })
 	}
 }

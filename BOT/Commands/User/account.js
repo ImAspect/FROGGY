@@ -109,42 +109,42 @@ module.exports = {
                             if (res.status === 400) {
                                 const status400Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('Le nom d\'utilisateur que vous avez choisi est déjà utilisé ! [❌]')
+                                    .setDescription('Le nom d\'utilisateur que vous avez choisi est déjà utilisé ! ❌')
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status400Embed], ephemeral: true })
                             } else if (res.status === 401) {
                                 const status401Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('Le nom d\'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! [❌]')
+                                    .setDescription('Le nom d\'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! ❌')
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status401Embed], ephemeral: true })
                             } else if (res.status === 402) {
                                 const status402Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('L\'adresse email que vous avez choisis est déjà utilisée ! [❌]')
+                                    .setDescription('L\'adresse email que vous avez choisis est déjà utilisée ! ❌')
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status402Embed], ephemeral: true })
                             } else if (res.status === 403) {
                                 const status403Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('Le format de l\'adresse email n\'est pas valide ! [❌]')
+                                    .setDescription('Le format de l\'adresse email n\'est pas valide ! ❌')
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status403Embed], ephemeral: true })
                             } else if (res.status === 404) {
                                 const status404Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('Le mot de passe doit être compris entre 8 et 16 caractères ! [❌]')
+                                    .setDescription('Le mot de passe doit être compris entre 8 et 16 caractères ! ❌')
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status404Embed], ephemeral: true })
                             } else if (res.status === 200) {
                                 const status200Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription("Bravo **" + username.toUpperCase() + `** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès [✅]`)
+                                    .setDescription(`Bravo **${username.toUpperCase()}** !\n\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès ✅`)
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status200Embed], ephemeral: true })
@@ -190,11 +190,24 @@ module.exports = {
                     loginAccount(data)
                         .then(async (res) => {
                             if (res.status === 400) {
-                                await interaction.reply({ content: "Le compte n'existe pas ! [❌]", ephemeral: true })
+                                const noAccountFoundEmbed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription(`Le compte n'existe pas ! ❌`)
+                                    .setTimestamp()
+
+                                await interaction.reply({ embeds: [noAccountFoundEmbed], ephemeral: true })
                             } else if (res.status === 401) {
-                                await interaction.reply({ content: "Le mot de passe est incorrect ! [❌]", ephemeral: true })
+                                const badPasswordEmbed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription(`Le mot de passe est incorrect ! ❌`)
+                                    .setTimestamp()
+                                await interaction.reply({ embeds: [badPasswordEmbed], ephemeral: true })
                             } else if (res.status === 200) {
-                                await interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nVous êtes connecté à votre compte **${SERVER_NAME}** [✅]`, ephemeral: true })
+                                const accountLoginSuccess = new EmbedBuilder()
+                                .setColor(EMBED_COLOR_TRANSPARENT)
+                                .setDescription(`Bravo **${username.toUpperCase()}** !\n\nVous êtes connecté à votre compte **${SERVER_NAME}** ✅`)
+                                .setTimestamp()
+                            await interaction.reply({ embeds: [accountLoginSuccess], ephemeral: true })
                             }
                         })
                 } else {

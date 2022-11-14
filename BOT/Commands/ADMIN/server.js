@@ -83,7 +83,7 @@ module.exports = {
                 soapCommand(`server restart ${seconds}`)
                 const serverRestartSuccess = new EmbedBuilder()
                     .setColor(EMBED_COLOR_TRANSPARENT)
-                    .setDescription(`\`Le serveur va redémarrer dans ${seconds} secondes !\``)
+                    .setDescription(`**Le serveur va redémarrer dans** \`${seconds}\` secondes !**`)
                     .setTimestamp()
 
                 await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
