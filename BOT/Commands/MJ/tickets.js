@@ -86,7 +86,7 @@ module.exports = {
 						} else {
 							const noTicketsEmbed = new EmbedBuilder()
 								.setColor(EMBED_COLOR_TRANSPARENT)
-								.setDescription('**Aucun ticket disponible pour le moment, réessayer dans quelques instants ! [❌]**')
+								.setDescription('**Aucun ticket disponible pour le moment, réessayer dans quelques instants ! ❌**')
 								.setTimestamp()
 
 							await interaction.reply({ embeds: [noTicketsEmbed], ephemeral: true })

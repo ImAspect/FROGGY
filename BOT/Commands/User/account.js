@@ -143,7 +143,7 @@ module.exports = {
                             } else if (res.status === 200) {
                                 const status200Embed = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription(`Bravo **${username.toUpperCase()}** !\n\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès ✅`)
+                                    .setDescription(`Bravo **${username.toUpperCase()}** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès ✅`)
                                     .setTimestamp()
 
                                 await interaction.reply({ embeds: [status200Embed], ephemeral: true })
@@ -204,7 +204,7 @@ module.exports = {
                             } else if (res.status === 200) {
                                 const accountLoginSuccess = new EmbedBuilder()
                                     .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription(`Bravo **${username.toUpperCase()}** !\n\nVous êtes connecté à votre compte **${SERVER_NAME}** ✅`)
+                                    .setDescription(`Bravo **${username.toUpperCase()}** !\nVous êtes connecté à votre compte **${SERVER_NAME}** ✅`)
                                     .setTimestamp()
                                 await interaction.reply({ embeds: [accountLoginSuccess], ephemeral: true })
                             }
@@ -225,32 +225,40 @@ module.exports = {
                     getAllCharactersByDiscordId(interaction.member.id)
                         .then(async (res) => {
                             if (res.status === 200) {
-                                const charactersEmbed = new EmbedBuilder()
-                                    .setColor(EMBED_COLOR_TRANSPARENT)
-                                    .setDescription('**Liste des personnages de votre compte !**')
-                                    .setTimestamp()
-                                res.result.map((x) => {
-                                    charactersEmbed.addFields({ name: `${x.online === 1 ? '🟢' : '🔴'} ${x.name}`, value: `\`${getRaceByGender(x.gender, x.race)}\` - \`${getClassByGender(x.gender, x.class)}\``, inline: false })
-                                })
+                                if (res.result[0]) {
+                                    const charactersEmbed = new EmbedBuilder()
+                                        .setColor(EMBED_COLOR_TRANSPARENT)
+                                        .setDescription('**Liste des personnages de votre compte !**')
+                                        .setTimestamp()
+                                    res.result.map((x) => {
+                                        charactersEmbed.addFields({ name: `${x.online === 1 ? '🟢' : '🔴'} ${x.name}`, value: `\`${getRaceByGender(x.gender, x.race)}\` - \`${getClassByGender(x.gender, x.class)}\``, inline: false })
+                                    })
 
-                                const selectMenuCharacters = new ActionRowBuilder()
-                                    .addComponents(
-                                        new SelectMenuBuilder()
-                                            .setCustomId('select_characters')
-                                            .setPlaceholder('Plus d\'informations sur l\'un de vos personnages ?')
-                                            .addOptions(
-                                                res.result.map((x) => {
-                                                    return {
-                                                        label: x.name,
-                                                        description: `${getRaceByGender(x.gender, x.race)} - ${getClassByGender(x.gender, x.class)}`,
-                                                        value: `${x.guid}`
-                                                    }
-                                                })
-                                            )
-                                    )
+                                    const selectMenuCharacters = new ActionRowBuilder()
+                                        .addComponents(
+                                            new SelectMenuBuilder()
+                                                .setCustomId('select_characters')
+                                                .setPlaceholder('Plus d\'informations sur l\'un de vos personnages ?')
+                                                .addOptions(
+                                                    res.result.map((x) => {
+                                                        return {
+                                                            label: x.name,
+                                                            description: `${getRaceByGender(x.gender, x.race)} - ${getClassByGender(x.gender, x.class)}`,
+                                                            value: `${x.guid}`
+                                                        }
+                                                    })
+                                                )
+                                        )
 
-                                await interaction.reply({ embeds: [charactersEmbed], components: [selectMenuCharacters], ephemeral: true })
+                                    await interaction.reply({ embeds: [charactersEmbed], components: [selectMenuCharacters], ephemeral: true })
+                                } else {
+                                    const noCharactersEmbed = new EmbedBuilder()
+                                        .setColor(EMBED_COLOR_TRANSPARENT)
+                                        .setDescription('Vous n\'avez pas de personnage sur votre compte ! ❌')
+                                        .setTimestamp()
 
+                                    await interaction.reply({ embeds: [noCharactersEmbed], ephemeral: true })
+                                }
                             }
                         })
                 } else {
