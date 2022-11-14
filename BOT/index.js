@@ -9,9 +9,9 @@ const client = new Discord.Client({
 client.slashCommands = new Discord.Collection()
 
 // Slash Commands Handler
-for (const subFolder of readdirSync(`${__dirname}/Commands/`)) {
-  for (const fileName of readdirSync(`${__dirname}/Commands/${subFolder}/`)) {
-    let file = require(`${__dirname}/Commands/${subFolder}/${fileName}`)
+for (const subFolder of readdirSync(`${__dirname}/commands/`)) {
+  for (const fileName of readdirSync(`${__dirname}/commands/${subFolder}/`)) {
+    let file = require(`${__dirname}/commands/${subFolder}/${fileName}`)
 
     client.slashCommands.set(file.name, file)
     console.log('⌨️  Command [ ' + fileName + ' ] ✅')
@@ -19,8 +19,8 @@ for (const subFolder of readdirSync(`${__dirname}/Commands/`)) {
 }
 
 // Events Handler
-for (const fileName of readdirSync(`${__dirname}/Events/`)) {
-  let file = require(`${__dirname}/Events/${fileName}`)
+for (const fileName of readdirSync(`${__dirname}/events/`)) {
+  let file = require(`${__dirname}/events/${fileName}`)
   let eventEmiter = file.emiter
 
   client[eventEmiter](file.name, file.run.bind(null, client))

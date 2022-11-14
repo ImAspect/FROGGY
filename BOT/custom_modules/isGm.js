@@ -1,4 +1,4 @@
-const { getAccountAccessById } = require('../Api/account')
+const { getAccountAccessById } = require('../api/account')
 
 async function isGm(accountId) {
     let access

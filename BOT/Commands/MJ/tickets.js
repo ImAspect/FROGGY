@@ -1,5 +1,5 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { getAllTickets } = require('../../Api/tickets')
+const { getAllTickets } = require('../../api/tickets')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME } = require('../../config/server.json')
 

@@ -1,6 +1,6 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
 const { createAccount, loginAccount } = require('../../api/account')
-const { getAllCharactersByDiscordId } = require('../../Api/characters')
+const { getAllCharactersByDiscordId } = require('../../api/characters')
 const { getClassByGender, getRaceByGender } = require('../../custom_modules/getByGender')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME } = require('../../config/server.json')

@@ -1,4 +1,4 @@
-const { getAccountVerifiedByDiscordId } = require('../Api/account')
+const { getAccountVerifiedByDiscordId } = require('../api/account')
 
 async function isLogin(discordId) {
     let verified
