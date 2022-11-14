@@ -1,6 +1,6 @@
 BOT/node_modules
 BOT/package-lock.json
-BOT/config.json
+BOT/config
 API/node_modules
 API/package-lock.json
 API/config

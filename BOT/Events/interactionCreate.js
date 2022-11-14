@@ -1,12 +1,14 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, SelectMenuBuilder } = require('discord.js')
 const moment = require('moment')
 moment.locale('fr')
-const { getCharacterByGuid, getTicketById, getAccountVerifiedByDiscordId, getAccountIdByCharacterGuid, getCharactersByAccountId } = require('../Api/account')
+const { getAccountVerifiedByDiscordId, getAccountIdByCharacterGuid } = require('../Api/account')
+const { getCharacterByGuid, getCharactersByAccountId } = require('../Api/characters')
+const { getTicketById } = require('../Api/tickets')
 const { getClassByGender, getRaceByGender } = require('../custom_modules/getByGender')
 const { convertSecondsToTime } = require('../custom_modules/convertSecondsToTime')
 const { convertMoney } = require('../custom_modules/convertMoney')
 const { soapCommand } = require('../custom_modules/soapCommand')
-const { EMBED_COLOR_TRANSPARENT } = require('../config.json')
+const { EMBED_COLOR_TRANSPARENT } = require('../config/discord.json')
 
 module.exports = {
   name: "interactionCreate",
@@ -16,7 +18,6 @@ module.exports = {
 
     if (interaction.isSelectMenu()) {
       if (interaction.customId === 'select_assign_chars') {
-        //soapCommand(`ticket assign {$ticketId} ${interaction.values[0]}`)
         const interactionCustomId = interaction.values[0]
         const ticketSplit = interactionCustomId.split("_")
         const ticketId = ticketSplit[1]

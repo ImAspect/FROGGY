@@ -1,6 +1,8 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { getAccountVerifiedByDiscordId, getAccountAccessById, getAllTickets } = require('../../api/account')
-const { SERVER_NAME, ROLE_MJ_ID, ROLE_ADMIN_ID, EMBED_COLOR_TRANSPARENT } = require('../../config.json')
+const { getAccountVerifiedByDiscordId, getAccountAccessById } = require('../../api/account')
+const { getAllTickets } = require('../../Api/tickets')
+const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
+const { SERVER_NAME } = require('../../config/server.json')
 
 module.exports = {
 	name: "tickets",

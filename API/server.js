@@ -13,6 +13,7 @@ app.use(express.urlencoded({ extended: true }))
 // ON INITIALISE NOS ROUTES
 const accountRoutes = require('./routes/account')
 const charactersRoutes = require('./routes/characters')
+const ticketsRoutes = require('./routes/tickets')
 
 // ON CRÉER UNE NOUVELLE CONNEXION MYSQL
 mysql.createConnection({
@@ -34,6 +35,7 @@ mysql.createConnection({
 
     accountRoutes(app, db)
     charactersRoutes(app, db)
+    ticketsRoutes(app, db)
 })
 
 const PORT = config.get('port')

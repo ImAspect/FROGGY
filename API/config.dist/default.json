@@ -1,0 +1,10 @@
+{
+    "mysql": {
+        "host": "HÔTE DB", // HÔTE DB
+        "user": "USER DB", // USER DB
+        "password": "PASSWORD DB", // PASSWORD DB
+        "authDatabase": "AUTH DB", // DATABASE AUTH
+        "port": "3306" // PORT DB
+    },
+    "port": "9100" // NE PAS TOUCHER
+}

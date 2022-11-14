@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const { TOKEN_BOT } = require("./config.json")
+const { TOKEN_BOT } = require("./config/discord.json")
 const { readdirSync } = require("node:fs")
 
 const client = new Discord.Client({

@@ -112,4 +112,7 @@ function getRaceByGender(genderId, raceId) {
     }
 }
 
-module.exports = { getClassByGender, getRaceByGender }
+module.exports = { 
+    getClassByGender,
+    getRaceByGender
+}

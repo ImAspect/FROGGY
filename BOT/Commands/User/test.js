@@ -1,5 +1,5 @@
 const { ApplicationCommandType } = require('discord.js')
-const { COMMANDS_CHANNEL_ID } = require('../../config.json')
+const { COMMANDS_CHANNEL_ID } = require('../../config/discord.json')
 
 module.exports = {
 	name: "test",

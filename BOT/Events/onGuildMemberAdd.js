@@ -3,7 +3,7 @@ const Canvas = require('@napi-rs/canvas')
 const { GlobalFonts, Image } = require('@napi-rs/canvas')
 const { join } = require('path')
 const { request } = require('undici')
-const { JOIN_ROLE_ID, JOIN_CHANNEL_ID, EMBED_COLOR_TRANSPARENT } = require('../config.json')
+const { JOIN_ROLE_ID, JOIN_CHANNEL_ID, EMBED_COLOR_TRANSPARENT } = require('../config/discord.json')
 
 module.exports = {
   name: "guildMemberAdd",

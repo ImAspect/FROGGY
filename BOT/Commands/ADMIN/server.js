@@ -1,6 +1,7 @@
 const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
 const { getAccountVerifiedByDiscordId, getAccountAccessById } = require('../../api/account')
-const { EMBED_COLOR_TRANSPARENT, SERVER_NAME } = require('../../config.json')
+const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
+const { SERVER_NAME } = require('../../config/server.json')
 const { soapCommand } = require('../../custom_modules/soapCommand')
 
 module.exports = {

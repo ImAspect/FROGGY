@@ -1,7 +1,9 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { createAccount, loginAccount, getAccountVerifiedByDiscordId, getAllCharactersByDiscordId } = require('../../api/account')
+const { createAccount, loginAccount, getAccountVerifiedByDiscordId } = require('../../api/account')
+const { getAllCharactersByDiscordId } = require('../../Api/characters')
 const { getClassByGender, getRaceByGender } = require('../../custom_modules/getByGender')
-const { SERVER_NAME, EMBED_COLOR_TRANSPARENT } = require('../../config.json')
+const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
+const { SERVER_NAME } = require('../../config/server.json')
 
 module.exports = {
     name: "account",

@@ -49,7 +49,7 @@ module.exports = (app, db) => {
 
     })
 
-    app.post('/api/account/login', async (req, res, next) => {
+    app.post('/api/account/discord/login', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
         const account = await accountModels.getAccountByUsername(req.body.username)
 
@@ -80,30 +80,6 @@ module.exports = (app, db) => {
         }
 
         return res.json({ status: 200, result: result[0] })
-    })
-
-    app.get('/api/account/characters/:discordId', async (req, res, next) => {
-        const accountModels = require('../models/account')(db)
-        const characterModels = require('../models/characters')(db)
-        const getAccountByDiscordId = await accountModels.getAccountVerifiedByDiscordId(req.params.discordId)
-        const getCharactersByAccountId = await characterModels.getCharactersByAccountId(getAccountByDiscordId[0].accountId)
-
-        if (getCharactersByAccountId.code) {
-            return res.json({ status: 500, err: getCharactersByAccountId.code })
-        }
-
-        return res.json({ status: 200, result: getCharactersByAccountId })
-    })
-
-    app.get('/api/character/:Guid', async (req, res, next) => {
-        const characterModels = require('../models/characters')(db)
-        const getCharacterByGuid = await characterModels.getCharacterByGuid(req.params.Guid)
-
-        if (getCharacterByGuid.code) {
-            return res.json({ status: 500, err: getCharacterByGuid.code })
-        }
-
-        return res.json({ status: 200, result: getCharacterByGuid })
     })
 
     app.get('/api/account/access/:id', async (req, res, next) => {

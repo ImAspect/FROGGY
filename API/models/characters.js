@@ -24,28 +24,8 @@ class characterModels {
 		})
 	}
 
-	static async getAllTickets() {
-		return db.query('SELECT * FROM Chars_DEV.gm_ticket WHERE completed = 0')
-		.then((result) => {
-			return result
-		})
-		.catch((err) => {
-			return err
-		})
-	}
-
-	static async getTicketById(id) {
-		return db.query('SELECT * FROM Chars_DEV.gm_ticket WHERE id = ? && completed = 0', [id])
-		.then((result) => {
-			return result
-		})
-		.catch((err) => {
-			return err
-		})
-	}
-
 	static async getCharactersByAccountId(accountId) {
-		return db.query('SELECT guid, name FROM Chars_DEV.characters WHERE account = ?', [accountId])
+		return db.query('SELECT guid, name, gender, class, race FROM Chars_DEV.characters WHERE account = ?', [accountId])
 		.then((result) => {
 			return result
 		})
