@@ -4,8 +4,8 @@ function soapCommand(command) {
 	const req = http.request({
 	    port: 7878,
 	    method: "POST",
-	    hostname: "194.163.178.73",
-	    auth: "Aspect:qsdf123",
+	    hostname: "IP",
+	    auth: "USER:MDP",
 	    headers: { 'Content-Type': 'application/xml' }
 	}, res=>{
 	    res.on('data', async d => {
