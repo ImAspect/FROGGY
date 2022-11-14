@@ -11,7 +11,7 @@ module.exports = {
     options: [
         {
             name: 'restart',
-            description: 'Redémarre le serveur depuis Discord !',
+            description: '[ADMIN] Redémarre le serveur depuis Discord !',
             type: 1,
             options: [
                 {
