@@ -6,7 +6,7 @@ module.exports = (_db) => {
 const config = require('config')
 class ticketsModels {
 	static async getAllTickets() {
-		return db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE completed = 0`)
+		return db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE completed = 0 LIMIT 20`)
 		.then((result) => {
 			return result
 		})

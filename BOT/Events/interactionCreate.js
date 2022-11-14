@@ -14,6 +14,13 @@ module.exports = {
   name: "interactionCreate",
   emiter: "on",
   run: async (client, interaction) => {
+    if (!interaction.isChatInputCommand() && !interaction.isSelectMenu() && !interaction.isButton() && !interaction.isModalSubmit()) return
+
+    // COMMANDS
+    if (interaction.isChatInputCommand()) {
+      const command = client.slashCommands.get(interaction.commandName)
+      command.run(client, interaction)
+    }
     // PERMISSIONS//
     const { isLogin } = require('../custom_modules/isLogin')
 
@@ -27,24 +34,8 @@ module.exports = {
           memberLogin = res
         }
       })
-
-    if (memberLogin === false) {
-      const memberNoLogin = new EmbedBuilder()
-        .setColor(EMBED_COLOR_TRANSPARENT)
-        .setDescription(`Vous n'êtes pas connecté à un compte **${SERVER_NAME}** ❌\n\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`)
-        .setTimestamp()
-
-      return await interaction.reply({ embeds: [memberNoLogin], ephemeral: true })
-    }
     // PERMISSIONS //
 
-    if (!interaction.isChatInputCommand() && !interaction.isSelectMenu() && !interaction.isButton() && !interaction.isModalSubmit()) return
-
-    // COMMANDS
-    if (interaction.isChatInputCommand()) {
-      const command = client.slashCommands.get(interaction.commandName)
-      command.run(client, interaction)
-    }
 
     // SELECT MENUS
     if (interaction.isSelectMenu()) {
@@ -108,7 +99,7 @@ module.exports = {
                   { name: 'Créer le', value: `• \`${moment(date).format('LLLL')}\``, inline: false },
                 )
                 .setTimestamp()
-  
+
               const ticketButtons = new ActionRowBuilder()
               {
                 res.result[0].assignedTo > 0 ?
@@ -127,8 +118,8 @@ module.exports = {
                       .setStyle(ButtonStyle.Primary),
                   )
               }
-              let account;
-  
+              let account
+
               await getAccountIdByCharacterGuid(res.result[0].assignedTo)
                 .then((res) => {
                   if (res.status === 200) {
@@ -157,7 +148,7 @@ module.exports = {
               await interaction.reply({ embeds: [ticketEmbed], components: [ticketButtons], ephemeral: true })
             }
           })
-  
+
       }
     }
 

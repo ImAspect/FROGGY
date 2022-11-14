@@ -91,7 +91,7 @@ module.exports = (app, db) => {
     app.get('/api/account/access/:id', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
         const result = await accountModels.getAccountAccessById(req.params.id)
-
+        
         if (result.length === 0) {
             return res.json({ status: 400, result: false })
         }

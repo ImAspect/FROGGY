@@ -62,23 +62,22 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     run: async (client, interaction) => {
-        // PERMISSIONS//
-        const { isLogin } = require('../../custom_modules/isLogin')
-
-        let memberLogin
-
-        await isLogin(interaction.member.id)
-            .then(async (res) => {
-                if (res === false) {
-                    memberLogin = false
-                } else {
-                    memberLogin = res
-                }
-            })
-        // PERMISSIONS //
-
         // GROUP ACCOUNT
         if (interaction.commandName === 'account') {
+            // PERMISSIONS//
+            const { isLogin } = require('../../custom_modules/isLogin')
+
+            let memberLogin
+
+            await isLogin(interaction.member.id)
+                .then(async (res) => {
+                    if (res === false) {
+                        memberLogin = false
+                    } else {
+                        memberLogin = res
+                    }
+                })
+            // PERMISSIONS //
             // COMMAND CREATE
             if (interaction.options._subcommand === 'create') {
                 if (memberLogin === false) {
@@ -204,10 +203,10 @@ module.exports = {
                                 await interaction.reply({ embeds: [badPasswordEmbed], ephemeral: true })
                             } else if (res.status === 200) {
                                 const accountLoginSuccess = new EmbedBuilder()
-                                .setColor(EMBED_COLOR_TRANSPARENT)
-                                .setDescription(`Bravo **${username.toUpperCase()}** !\n\nVous êtes connecté à votre compte **${SERVER_NAME}** ✅`)
-                                .setTimestamp()
-                            await interaction.reply({ embeds: [accountLoginSuccess], ephemeral: true })
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription(`Bravo **${username.toUpperCase()}** !\n\nVous êtes connecté à votre compte **${SERVER_NAME}** ✅`)
+                                    .setTimestamp()
+                                await interaction.reply({ embeds: [accountLoginSuccess], ephemeral: true })
                             }
                         })
                 } else {
