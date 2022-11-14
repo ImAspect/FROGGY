@@ -42,5 +42,5 @@ const PORT = config.get('port')
 
 // ON DÉMARRE L'APPLICATION
 app.listen(PORT, () => {
-    console.log('API : Listening on port ' + PORT + ' [CONNECTED]')
+    console.log('API (Listening on port ' + PORT + ') [CONNECTED]')
 })

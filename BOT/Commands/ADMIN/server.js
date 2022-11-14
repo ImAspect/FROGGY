@@ -1,5 +1,4 @@
 const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
-const { getAccountVerifiedByDiscordId, getAccountAccessById } = require('../../api/account')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME } = require('../../config/server.json')
 const { soapCommand } = require('../../custom_modules/soapCommand')
@@ -25,44 +24,70 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     run: async (client, interaction) => {
-        if (interaction.commandName === 'server' && interaction.options._subcommand === 'restart') {
-            let verified = []
+        // PERMISSIONS//
+        const { isLogin } = require('../../custom_modules/isLogin')
+        const { isGm } = require('../../custom_modules/isGm')
 
-            await getAccountVerifiedByDiscordId(interaction.member.id)
-                .then((res) => {
-                    if (res.status === 200) {
-                        verified.push(res.result)
-                    }
-                })
+        let memberLogin
+        let memberGm
 
-            if (verified[0] !== undefined) {
-                let accountAccess
-
-                await getAccountAccessById(verified[0].accountId)
-                    .then((res) => {
-                        if (res.status === 200) {
-                            accountAccess = res.result
-                        }
-                    })
-                if (accountAccess[0] !== undefined) {
-                    if (accountAccess[0].gmlevel === 3) {
-                        let seconds = interaction.options._hoistedOptions[0].value
-                        soapCommand(`server restart ${seconds}`)
-                        const serverRestartSuccess = new EmbedBuilder()
-                            .setColor(EMBED_COLOR_TRANSPARENT)
-                            .setDescription(`\`Le serveur va redémarrer dans ${seconds} secondes !\``)
-                            .setTimestamp()
-    
-                        await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
-                    } else {
-                        await interaction.reply({ content: `Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder au \`Server\` [❌]\n`, ephemeral: true })
-                    }
+        await isLogin(interaction.member.id)
+            .then(async (res) => {
+                if (res === false) {
+                    memberLogin = false
                 } else {
-                    await interaction.reply({ content: `Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder au \`Server\` [❌]\n`, ephemeral: true })
+                    memberLogin = res
                 }
-            } else {
-                await interaction.reply({ content: `Vous n'êtes pas connecté à un compte **${SERVER_NAME}** [❌]\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`, ephemeral: true })
-            }
+            })
+
+        if (memberLogin === false) {
+            const memberNoLogin = new EmbedBuilder()
+                .setColor(EMBED_COLOR_TRANSPARENT)
+                .setDescription(`Vous n'êtes pas connecté à un compte **${SERVER_NAME}** ❌\n\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`)
+                .setTimestamp()
+
+            return await interaction.reply({ embeds: [memberNoLogin], ephemeral: true })
         }
+
+        await isGm(memberLogin[0].accountId)
+            .then(async (res) => {
+                if (res === false) {
+                    memberGm = false
+                } else {
+                    memberGm = res
+                }
+            })
+
+        if (memberGm === false) {
+            const memberNoGm = new EmbedBuilder()
+                .setColor(EMBED_COLOR_TRANSPARENT)
+                .setDescription(`L'équipe **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
+                .setTimestamp()
+
+            return await interaction.reply({ embeds: [memberNoGm], ephemeral: true })
+        } else if (memberGm[0].gmlevel != 3) {
+            const memberNoGmAdmin = new EmbedBuilder()
+                .setColor(EMBED_COLOR_TRANSPARENT)
+                .setDescription(`Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
+                .setTimestamp()
+
+            return await interaction.reply({ embeds: [memberNoGmAdmin], ephemeral: true })
+        }
+        // PERMISSIONS //
+
+        // GROUP SERVER
+        if (interaction.commandName === 'server')
+            // COMMAND RESTART
+            if (interaction.options._subcommand === 'restart') {
+                let seconds = interaction.options._hoistedOptions[0].value
+                soapCommand(`server restart ${seconds}`)
+                const serverRestartSuccess = new EmbedBuilder()
+                    .setColor(EMBED_COLOR_TRANSPARENT)
+                    .setDescription(`\`Le serveur va redémarrer dans ${seconds} secondes !\``)
+                    .setTimestamp()
+
+                await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
+
+            }
     }
 }

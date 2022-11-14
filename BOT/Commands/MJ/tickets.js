@@ -1,5 +1,4 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { getAccountVerifiedByDiscordId, getAccountAccessById } = require('../../api/account')
 const { getAllTickets } = require('../../Api/tickets')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME } = require('../../config/server.json')
@@ -9,74 +8,92 @@ module.exports = {
 	description: `[GM] Ensemble de commandes pour les tickets ${SERVER_NAME} !`,
 	type: ApplicationCommandType.ChatInput,
 	run: async (client, interaction) => {
-		if (interaction.commandName === 'tickets') {
-			let verified = []
+		// PERMISSIONS//
+		const { isLogin } = require('../../custom_modules/isLogin')
+		const { isGm } = require('../../custom_modules/isGm')
 
-			await getAccountVerifiedByDiscordId(interaction.member.id)
-				.then((res) => {
+		let memberLogin
+		let memberGm
+
+		await isLogin(interaction.member.id)
+			.then(async (res) => {
+				if (res === false) {
+					memberLogin = false
+				} else {
+					memberLogin = res
+				}
+			})
+
+		if (memberLogin === false) {
+			const memberNoLogin = new EmbedBuilder()
+				.setColor(EMBED_COLOR_TRANSPARENT)
+				.setDescription(`Vous n'êtes pas connecté à un compte **${SERVER_NAME}** ❌\n\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`)
+				.setTimestamp()
+
+			return await interaction.reply({ embeds: [memberNoLogin], ephemeral: true })
+		}
+
+		await isGm(memberLogin[0].accountId)
+			.then(async (res) => {
+				if (res === false) {
+					memberGm = false
+				} else {
+					memberGm = res
+				}
+			})
+
+		if (memberGm === false) {
+			const memberNoGm = new EmbedBuilder()
+				.setColor(EMBED_COLOR_TRANSPARENT)
+				.setDescription(`L'équipe **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
+				.setTimestamp()
+
+			return await interaction.reply({ embeds: [memberNoGm], ephemeral: true })
+		}
+		// PERMISSIONS //
+
+		// GROUP TICKETS
+		if (interaction.commandName === 'tickets') {
+			await getAllTickets()
+				.then(async (res) => {
 					if (res.status === 200) {
-						verified.push(res.result)
+						if (res.result[0] !== undefined) {
+							const ticketsEmbed = new EmbedBuilder()
+								.setColor(EMBED_COLOR_TRANSPARENT)
+								.setDescription('**Liste des tickets actuellement ouverts !**')
+								.setTimestamp()
+							res.result.map(async (x) => {
+								ticketsEmbed.addFields({ name: `Ticket n° ${x.id}`, value: `**Joueur** \`${x.name}\`\n**Description** \`${x.description}\`\n${x.assignedTo === 0 ? '**Statut** `Pas assigné`' : '**Statut** `Assigné`'}`, inline: false })
+							})
+
+							const selectTickets = new ActionRowBuilder()
+								.addComponents(
+									new SelectMenuBuilder()
+										.setCustomId('select_tickets')
+										.setPlaceholder('Effectuer une action sur un ticket !')
+										.addOptions(
+											res.result.map((x, index) => {
+												return {
+													label: `Ticket ouvert par ${x.name}`,
+													description: `Ticket n°${x.id}`,
+													value: `${x.id}`,
+												}
+											})
+										),
+								);
+
+
+							await interaction.reply({ embeds: [ticketsEmbed], components: [selectTickets], ephemeral: true })
+						} else {
+							const noTicketsEmbed = new EmbedBuilder()
+								.setColor(EMBED_COLOR_TRANSPARENT)
+								.setDescription('**Aucun ticket disponible pour le moment, réessayer dans quelques instants ! [❌]**')
+								.setTimestamp()
+
+							await interaction.reply({ embeds: [noTicketsEmbed], ephemeral: true })
+						}
 					}
 				})
-
-			if (verified[0] != undefined) {
-				let accountAccess
-
-				await getAccountAccessById(verified[0].accountId)
-					.then((res) => {
-						if (res.status === 200) {
-							accountAccess = res.result
-						}
-					})
-
-				if (accountAccess[0] !== undefined) {
-					await getAllTickets()
-						.then(async (res) => {
-							if (res.status === 200) {
-								if (res.result[0] !== undefined) {
-									const ticketsEmbed = new EmbedBuilder()
-										.setColor(EMBED_COLOR_TRANSPARENT)
-										.setDescription('**Liste des tickets actuellement ouverts !**')
-										.setTimestamp()
-									res.result.map(async (x) => {
-										ticketsEmbed.addFields({ name: `Ticket n° ${x.id}`, value: `**Joueur** \`${x.name}\`\n**Description** \`${x.description}\`\n${x.assignedTo === 0 ? '**Statut** `Pas assigné`' : '**Statut** `Assigné`'}`, inline: false })
-									})
-
-									const selectTickets = new ActionRowBuilder()
-										.addComponents(
-											new SelectMenuBuilder()
-												.setCustomId('select_tickets')
-												.setPlaceholder('Effectuer une action sur un ticket !')
-												.addOptions(
-													res.result.map((x, index) => {
-														return {
-															label: `Ticket ouvert par ${x.name}`,
-															description: `Ticket n°${x.id}`,
-															value: `${x.id}`,
-														}
-													})
-												),
-										);
-
-
-									await interaction.reply({ embeds: [ticketsEmbed], components: [selectTickets] , ephemeral: true })
-								} else {
-									const noTicketsEmbed = new EmbedBuilder()
-										.setColor(EMBED_COLOR_TRANSPARENT)
-										.setDescription('**Aucun ticket disponible pour le moment, réessayer dans quelques instants ! [❌]**')
-										.setTimestamp()
-
-									await interaction.reply({ embeds: [noTicketsEmbed], ephemeral: true })
-								}
-							}
-						})
-				} else {
-					await interaction.reply({ content: `L'équipe **${SERVER_NAME}** sont les seuls à pouvoir accéder aux \`tickets\` [❌]\n`, ephemeral: true })
-				}
-
-			} else {
-				await interaction.reply({ content: `Vous n'êtes pas connecté à un compte **${SERVER_NAME}** [❌]\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`, ephemeral: true })
-			}
 		}
 	}
 }

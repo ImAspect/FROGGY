@@ -79,18 +79,26 @@ module.exports = (app, db) => {
             return res.json({ status: 500, err: result.code })
         }
 
-        return res.json({ status: 200, result: result[0] })
+        if (result.length === 0) {
+            return res.json({ status: 400, result: false })
+        }
+        
+        if (result.length === 1) {
+            return res.json({ status: 200, result: result })
+        }
     })
 
     app.get('/api/account/access/:id', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
-        const getAccountAccessById = await accountModels.getAccountAccessById(req.params.id)
+        const result = await accountModels.getAccountAccessById(req.params.id)
 
-        if (getAccountAccessById.code) {
-            return res.json({ status: 500, err: getAccountAccessById.code })
+        if (result.length === 0) {
+            return res.json({ status: 400, result: false })
         }
-
-        return res.json({ status: 200, result: getAccountAccessById })
+        
+        if (result.length === 1) {
+            return res.json({ status: 200, result: result })
+        }
     })
 
     app.get('/api/account/character/:guid', async (req, res, next) => {

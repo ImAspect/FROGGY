@@ -1,5 +1,5 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { createAccount, loginAccount, getAccountVerifiedByDiscordId } = require('../../api/account')
+const { createAccount, loginAccount } = require('../../api/account')
 const { getAllCharactersByDiscordId } = require('../../Api/characters')
 const { getClassByGender, getRaceByGender } = require('../../custom_modules/getByGender')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
@@ -62,162 +62,193 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     run: async (client, interaction) => {
-        if (interaction.commandName === 'account' && interaction.options._subcommand === 'create') {
-            let username
-            let email
-            let password
-            interaction.options._hoistedOptions.map((x) => {
-                if (x.name === 'username') {
-                    username = x.value
-                }
-                if (x.name === 'email') {
-                    email = x.value
-                }
-                if (x.name === 'password') {
-                    password = x.value
+        // PERMISSIONS//
+        const { isLogin } = require('../../custom_modules/isLogin')
+
+        let memberLogin
+
+        await isLogin(interaction.member.id)
+            .then(async (res) => {
+                if (res === false) {
+                    memberLogin = false
+                } else {
+                    memberLogin = res
                 }
             })
-            const data = {
-                username: username,
-                email: email,
-                password: password
-            }
-            createAccount(data)
-                .then(async (res) => {
-                    if (res.status === 400) {
-                        const status400Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription('Le nom d\'utilisateur que vous avez choisi est déjà utilisé ! [❌]')
-                        .setTimestamp()
+        // PERMISSIONS //
 
-                        await interaction.reply({ embeds: [status400Embed], ephemeral: true })
-                    } else if (res.status === 401) {
-                        const status401Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription('Le nom d\'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! [❌]')
-                        .setTimestamp()
+        // GROUP ACCOUNT
+        if (interaction.commandName === 'account') {
+            // COMMAND CREATE
+            if (interaction.options._subcommand === 'create') {
+                if (memberLogin === false) {
+                    let username
+                    let email
+                    let password
 
-                        await interaction.reply({ embeds: [status401Embed], ephemeral: true })
-                    } else if (res.status === 402) {
-                        const status402Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription('L\'adresse email que vous avez choisis est déjà utilisée ! [❌]')
-                        .setTimestamp()
+                    interaction.options._hoistedOptions.map((x) => {
+                        if (x.name === 'username') {
+                            username = x.value
+                        }
+                        if (x.name === 'email') {
+                            email = x.value
+                        }
+                        if (x.name === 'password') {
+                            password = x.value
+                        }
+                    })
 
-                        await interaction.reply({ embeds: [status402Embed], ephemeral: true })
-                    } else if (res.status === 403) {
-                        const status403Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription('Le format de l\'adresse email n\'est pas valide ! [❌]')
-                        .setTimestamp()
-
-                        await interaction.reply({ embeds: [status403Embed], ephemeral: true })
-                    } else if (res.status === 404) {
-                        const status404Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription('Le mot de passe doit être compris entre 8 et 16 caractères ! [❌]')
-                        .setTimestamp()
-
-                        await interaction.reply({ embeds: [status404Embed], ephemeral: true })
-                    } else if (res.status === 200) {
-                        const status200Embed = new EmbedBuilder()
-                        .setColor(EMBED_COLOR_TRANSPARENT)
-                        .setDescription("Bravo **" + username.toUpperCase() + `** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès [✅]`)
-                        .setTimestamp()
-
-                        await interaction.reply({ embeds: [status200Embed], ephemeral: true })
+                    const data = {
+                        username: username,
+                        email: email,
+                        password: password
                     }
-                })
-        } else if (interaction.commandName === 'account' && interaction.options._subcommand === 'login') {
 
-            let verified = []
+                    createAccount(data)
+                        .then(async (res) => {
+                            if (res.status === 400) {
+                                const status400Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('Le nom d\'utilisateur que vous avez choisi est déjà utilisé ! [❌]')
+                                    .setTimestamp()
 
-            await getAccountVerifiedByDiscordId(interaction.member.id)
-                .then((res) => {
-                    if (res.status === 200) {
-                        verified.push(res.result)
-                    }
-                })
+                                await interaction.reply({ embeds: [status400Embed], ephemeral: true })
+                            } else if (res.status === 401) {
+                                const status401Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('Le nom d\'utilisateur doit être compris entre 8 et 16 caractères et ne peut pas contenir de caractères spéciaux ! [❌]')
+                                    .setTimestamp()
 
-            if (verified[0] === undefined) {
-                let username
-                let email
-                let password
-                interaction.options._hoistedOptions.map((x) => {
-                    if (x.name === 'username') {
-                        username = x.value
-                    }
-                    if (x.name === 'email') {
-                        email = x.value
-                    }
-                    if (x.name === 'password') {
-                        password = x.value
-                    }
-                })
-                const data = {
-                    username: username,
-                    email: email,
-                    password: password,
-                    discordId: JSON.parse(interaction.member.id)
+                                await interaction.reply({ embeds: [status401Embed], ephemeral: true })
+                            } else if (res.status === 402) {
+                                const status402Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('L\'adresse email que vous avez choisis est déjà utilisée ! [❌]')
+                                    .setTimestamp()
+
+                                await interaction.reply({ embeds: [status402Embed], ephemeral: true })
+                            } else if (res.status === 403) {
+                                const status403Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('Le format de l\'adresse email n\'est pas valide ! [❌]')
+                                    .setTimestamp()
+
+                                await interaction.reply({ embeds: [status403Embed], ephemeral: true })
+                            } else if (res.status === 404) {
+                                const status404Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('Le mot de passe doit être compris entre 8 et 16 caractères ! [❌]')
+                                    .setTimestamp()
+
+                                await interaction.reply({ embeds: [status404Embed], ephemeral: true })
+                            } else if (res.status === 200) {
+                                const status200Embed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription("Bravo **" + username.toUpperCase() + `** !\nLa création de votre compte **${SERVER_NAME}** est terminé avec succès [✅]`)
+                                    .setTimestamp()
+
+                                await interaction.reply({ embeds: [status200Embed], ephemeral: true })
+                            }
+                        })
+                } else {
+                    const memberisLogin = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Vous êtes déjà connecté à un compte **${SERVER_NAME}** ❌`)
+                        .setTimestamp()
+
+                    return await interaction.reply({ embeds: [memberisLogin], ephemeral: true })
                 }
-                loginAccount(data)
-                    .then(async (res) => {
-                        if (res.status === 400) {
-                            await interaction.reply({ content: "Le compte n'existe pas ! [❌]", ephemeral: true })
-                        } else if (res.status === 401) {
-                            await interaction.reply({ content: "Le mot de passe est incorrect ! [❌]", ephemeral: true })
-                        } else if (res.status === 200) {
-                            await interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nVous êtes connecté à votre compte **${SERVER_NAME}** [✅]`, ephemeral: true })
-                        }
-                    })
-            } else {
-                await interaction.reply({ content: `Votre compte **${SERVER_NAME}** est déjà connecté ! [✅]`, ephemeral: true })
             }
-        } else if (interaction.commandName === 'account' && interaction.options._subcommand === 'characters') {
 
-            let verified = []
+            // COMMAND LOGIN
+            if (interaction.options._subcommand === 'login') {
+                if (memberLogin === false) {
+                    let username
+                    let email
+                    let password
 
-            await getAccountVerifiedByDiscordId(interaction.member.id)
-                .then((res) => {
-                    if (res.status === 200) {
-                        verified.push(res.result)
-                    }
-                })
+                    interaction.options._hoistedOptions.map((x) => {
 
-            if (verified[0] != undefined) {
-                getAllCharactersByDiscordId(interaction.member.id)
-                    .then(async (res) => {
-                        if (res.status === 200) {
-                            const charactersEmbed = new EmbedBuilder()
-                                .setColor(EMBED_COLOR_TRANSPARENT)
-                                .setDescription('**Liste des personnages de votre compte !**')
-                                .setTimestamp()
-                            res.result.map((x, index) => {
-                                charactersEmbed.addFields({ name: `${x.online === 1 ? '🟢' : '🔴'} ${x.name}`, value: `\`${getRaceByGender(x.gender, x.race)}\` - \`${getClassByGender(x.gender, x.class)}\``, inline: false })
-                            })
-
-                            const selectMenuCharacters = new ActionRowBuilder()
-                                .addComponents(
-                                    new SelectMenuBuilder()
-                                        .setCustomId('select_characters')
-                                        .setPlaceholder('Plus d\'informations sur l\'un de vos personnages ?')
-                                        .addOptions(
-                                            res.result.map((x, index) => {
-                                                return {
-                                                    label: x.name,
-                                                    description: `${getRaceByGender(x.gender, x.race)} - ${getClassByGender(x.gender, x.class)}`,
-                                                    value: `${x.guid}`,
-                                                }
-                                            })
-                                        ),
-                                );
-
-                            await interaction.reply({ embeds: [charactersEmbed], components: [selectMenuCharacters], ephemeral: true })
-
+                        if (x.name === 'username') {
+                            username = x.value
+                        }
+                        if (x.name === 'email') {
+                            email = x.value
+                        }
+                        if (x.name === 'password') {
+                            password = x.value
                         }
                     })
-            } else {
-                await interaction.reply({ content: `Vous n'êtes pas connecté à un compte **${SERVER_NAME}** [❌]\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`, ephemeral: true })
+
+                    const data = {
+                        username: username,
+                        email: email,
+                        password: password,
+                        discordId: JSON.parse(interaction.member.id)
+                    }
+
+                    loginAccount(data)
+                        .then(async (res) => {
+                            if (res.status === 400) {
+                                await interaction.reply({ content: "Le compte n'existe pas ! [❌]", ephemeral: true })
+                            } else if (res.status === 401) {
+                                await interaction.reply({ content: "Le mot de passe est incorrect ! [❌]", ephemeral: true })
+                            } else if (res.status === 200) {
+                                await interaction.reply({ content: "Bravo **" + username.toUpperCase() + `** !\nVous êtes connecté à votre compte **${SERVER_NAME}** [✅]`, ephemeral: true })
+                            }
+                        })
+                } else {
+                    const memberisLogin = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Vous êtes déjà connecté à un compte **${SERVER_NAME}** ❌`)
+                        .setTimestamp()
+
+                    return await interaction.reply({ embeds: [memberisLogin], ephemeral: true })
+                }
+            }
+
+            // COMMAND CHARACTERS
+            if (interaction.options._subcommand === 'characters') {
+                if (memberLogin !== false) {
+                    getAllCharactersByDiscordId(interaction.member.id)
+                        .then(async (res) => {
+                            if (res.status === 200) {
+                                const charactersEmbed = new EmbedBuilder()
+                                    .setColor(EMBED_COLOR_TRANSPARENT)
+                                    .setDescription('**Liste des personnages de votre compte !**')
+                                    .setTimestamp()
+                                res.result.map((x) => {
+                                    charactersEmbed.addFields({ name: `${x.online === 1 ? '🟢' : '🔴'} ${x.name}`, value: `\`${getRaceByGender(x.gender, x.race)}\` - \`${getClassByGender(x.gender, x.class)}\``, inline: false })
+                                })
+
+                                const selectMenuCharacters = new ActionRowBuilder()
+                                    .addComponents(
+                                        new SelectMenuBuilder()
+                                            .setCustomId('select_characters')
+                                            .setPlaceholder('Plus d\'informations sur l\'un de vos personnages ?')
+                                            .addOptions(
+                                                res.result.map((x) => {
+                                                    return {
+                                                        label: x.name,
+                                                        description: `${getRaceByGender(x.gender, x.race)} - ${getClassByGender(x.gender, x.class)}`,
+                                                        value: `${x.guid}`
+                                                    }
+                                                })
+                                            )
+                                    )
+
+                                await interaction.reply({ embeds: [charactersEmbed], components: [selectMenuCharacters], ephemeral: true })
+
+                            }
+                        })
+                } else {
+                    const memberisLogin = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Vous n'êtes pas connecté à un compte **${SERVER_NAME}** ❌\n\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`)
+                        .setTimestamp()
+
+                    return await interaction.reply({ embeds: [memberisLogin], ephemeral: true })
+                }
             }
         }
     }
