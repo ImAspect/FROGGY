@@ -11,12 +11,12 @@ module.exports = {
     options: [
         {
             name: 'restart',
-            description: '[ADMIN] Redémarre le serveur depuis Discord !',
+            description: `[ADMIN] Redémarre le serveur ${SERVER_NAME} depuis Discord !`,
             type: 1,
             options: [
                 {
                     name: 'seconds',
-                    description: 'Le nombre de secondes avant le redémarrage du serveur (min 5secondes)',
+                    description: `Le nombre de secondes avant le redémarrage du serveur ${SERVER_NAME} (min 5secondes)`,
                     required: true,
                     type: 3
                 }

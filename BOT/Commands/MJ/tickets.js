@@ -6,7 +6,7 @@ const { SERVER_NAME } = require('../../config/server.json')
 
 module.exports = {
 	name: "tickets",
-	description: "[GM] Ensemble de commandes pour le groupe \"Tickets\" !",
+	description: `[GM] Ensemble de commandes pour les tickets ${SERVER_NAME} !`,
 	type: ApplicationCommandType.ChatInput,
 	run: async (client, interaction) => {
 		if (interaction.commandName === 'tickets') {
@@ -28,6 +28,7 @@ module.exports = {
 							accountAccess = res.result
 						}
 					})
+
 				if (accountAccess[0] !== undefined) {
 					await getAllTickets()
 						.then(async (res) => {

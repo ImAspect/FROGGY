@@ -7,12 +7,12 @@ const { SERVER_NAME } = require('../../config/server.json')
 
 module.exports = {
     name: "account",
-    description: "Ensemble de commandes pour le groupe \"Account\" !",
+    description: `Ensemble de commandes pour les comptes ${SERVER_NAME} !`,
     type: 2,
     options: [
         {
             name: 'create',
-            description: 'Créer votre compte Archimède depuis Discord !',
+            description: `Créer votre compte ${SERVER_NAME} depuis Discord !`,
             type: 1,
             options: [
                 {
@@ -37,7 +37,7 @@ module.exports = {
         },
         {
             name: 'login',
-            description: 'Connectez votre compte Archimède à votre compte Discord !',
+            description: `Connectez votre compte ${SERVER_NAME} à votre compte Discord !`,
             type: 1,
             options: [
                 {
