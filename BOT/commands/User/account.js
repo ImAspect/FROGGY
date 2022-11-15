@@ -86,10 +86,12 @@ module.exports = {
                 let functions
 
                 active.map((x, index) => {
-                    if (x.active === true && x.name === 'accountCreateCommand') {
-                        functions = true
-                    } else {
-                        functions = false
+                    if (x.name === 'accountCreateCommand') {
+                        if (x.active === true) {
+                            functions = true
+                        } else {
+                            functions = false
+                        }
                     }
                 })
                 //ACTIVE
@@ -249,10 +251,12 @@ module.exports = {
                 let functions
 
                 active.map((x, index) => {
-                    if (x.active === true && x.name === 'accountCharactersCommand') {
-                        functions = true
-                    } else {
-                        functions = false
+                    if (x.name === 'accountCharactersCommand') {
+                        if (x.active === true) {
+                            functions = true
+                        } else {
+                            functions = false
+                        }
                     }
                 })
                 //ACTIVE

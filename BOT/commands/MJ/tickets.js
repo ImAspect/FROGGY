@@ -11,15 +11,17 @@ module.exports = {
 		// GROUP TICKETS
 		if (interaction.commandName === 'tickets') {
 			// ACTIVE
-			const active = require('../../config/active.json')
 			delete require.cache[require.resolve('../../config/active.json')]
+			const active = require('../../config/active.json')
 			let functions
 
 			active.map((x, index) => {
-				if (x.active === true && x.name === 'ticketsCommand') {
-					functions = true
-				} else {
-					functions = false
+				if (x.name === 'ticketsCommand') {
+					if (x.active === true) {
+						functions = true
+					} else {
+						functions = false
+					}
 				}
 			})
 			//ACTIVE

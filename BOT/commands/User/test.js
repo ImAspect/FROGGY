@@ -12,10 +12,12 @@ module.exports = {
 		let functions
 
 		active.map((x, index) => {
-			if (x.active === true && x.name === 'testCommand') {
-				functions = true
-			} else {
-				functions = false
+			if (x.name === 'testCommand') {
+				if (x.active === true) {
+					functions = true
+				} else {
+					functions = false
+				}
 			}
 		})
 		//ACTIVE

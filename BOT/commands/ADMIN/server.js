@@ -95,10 +95,12 @@ module.exports = {
                 let functions
 
                 active.map((x, index) => {
-                    if (x.active === true && x.name === 'serverCommand') {
-                        functions = true
-                    } else {
-                        functions = false
+                    if (x.name === 'serverCommand') {
+                        if (x.active === true) {
+                            functions = true
+                        } else {
+                            functions = false
+                        }
                     }
                 })
                 //ACTIVE

@@ -14,13 +14,15 @@ module.exports = {
     const active = require('../config/active.json')
     let functions
 
-    active.map((x, index) => {
-      if (x.active === true && x.name === 'onReadyPresence') {
-        functions = true
-      } else {
-        functions = false
-      }
-    })
+		active.map((x, index) => {
+			if (x.name === 'onReadyPresence') {
+				if (x.active === true) {
+					functions = true
+				} else {
+					functions = false
+				}
+			}
+		})
     //ACTIVE
     if (functions === true) {
       client.user.setPresence({

@@ -16,13 +16,15 @@ module.exports = {
     const active = require('../config/active.json')
     let functions
 
-    active.map((x, index) => {
-      if (x.active === true && x.name === 'setRoleOnJoin') {
-        functions = true
-      } else {
-        functions = false
-      }
-    })
+		active.map((x, index) => {
+			if (x.name === 'setRoleOnJoin') {
+				if (x.active === true) {
+					functions = true
+				} else {
+					functions = false
+				}
+			}
+		})
     //ACTIVE
     if (functions === true) {
       const roleMember = member.guild.roles.cache.find(r => r.id === JOIN_ROLE_ID)
@@ -34,13 +36,15 @@ module.exports = {
     // ACTIVE
     let functionsWelcome
 
-    active.map((x, index) => {
-      if (x.active === true && x.name === 'sendWelcomeOnJoin') {
-        functionsWelcome = true
-      } else {
-        functionsWelcome = false
-      }
-    })
+		active.map((x, index) => {
+			if (x.name === 'sendWelcomeOnJoin') {
+				if (x.active === true) {
+					functionsWelcome = true
+				} else {
+					functionsWelcome = false
+				}
+			}
+		})
     //ACTIVE
     if (functionsWelcome === true) {
       const addMemberEmbed = new EmbedBuilder()
