@@ -8,5 +8,6 @@
         "worldDatabase": "WORLD DATABASE",
         "port": "3306"
     },
+    "core": "CORE DE VOTRE SERVEUR (AC / TC / SC)",
     "port": "9100"
 }
