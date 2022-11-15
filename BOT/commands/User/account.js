@@ -81,6 +81,7 @@ module.exports = {
             // COMMAND CREATE
             if (interaction.options._subcommand === 'create') {
                 // ACTIVE
+                delete require.cache[require.resolve('../../config/active.json')]
                 const active = require('../../config/active.json')
                 let functions
 
@@ -243,6 +244,7 @@ module.exports = {
             // COMMAND CHARACTERS
             if (interaction.options._subcommand === 'characters') {
                 // ACTIVE
+                delete require.cache[require.resolve('../../config/active.json')]
                 const active = require('../../config/active.json')
                 let functions
 

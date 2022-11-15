@@ -1,1 +1,56 @@
-[{"name": "setRoleOnJoin","description": "Attribue un role au joueur lorsqu'il rejoint le discord","active": true},{"name": "sendWelcomeOnJoin","description": "Envoie un message personnalisé lorsqu'un joueur rejoint le discord","active": true},{"name": "sendByeOnLeft","description": "Envoie un message personnalisé lorsqu'un joueur quitte le discord","active": true},{"name": "onReadyPresence","description": "Définie la présence du bot sur 'Joue à ServerName'","active": true},{"name": "accountCharactersCommand","description": "Commande pour voir la liste de ses personnages depuis discord","active": true},{"name": "accountCreateCommand","description": "Commande pour créer un compte depuis discord","active": true},{"name": "ticketsCommand","description": "Commande pour gérer les tickets depuis discord","active": true},{"name": "serverCommand","description": "Commande pour gérer le serveur depuis discord","active": true},{"name": "testCommand","description": "Commande test","active": true}]
+[
+    {
+        "id": 1,
+        "name": "setRoleOnJoin",
+        "description": "Attribue un role au joueur lorsqu'il rejoint le discord",
+        "active": true
+    },
+    {
+        "id": 2,
+        "name": "sendWelcomeOnJoin",
+        "description": "Envoie un message personnalisé lorsqu'un joueur rejoint le discord",
+        "active": true
+    },
+    {
+        "id": 3,
+        "name": "sendByeOnLeft",
+        "description": "Envoie un message personnalisé lorsqu'un joueur quitte le discord",
+        "active": true
+    },
+    {
+        "id": 4,
+        "name": "onReadyPresence",
+        "description": "Définie la présence du bot sur 'Joue à ServerName'",
+        "active": true
+    },
+    {
+        "id": 5,
+        "name": "accountCharactersCommand",
+        "description": "Commande pour voir la liste de ses personnages depuis discord",
+        "active": true
+    },
+    {
+        "id": 6,
+        "name": "accountCreateCommand",
+        "description": "Commande pour créer un compte depuis discord",
+        "active": true
+    },
+    {
+        "id": 7,
+        "name": "ticketsCommand",
+        "description": "Commande pour gérer les tickets depuis discord",
+        "active": true
+    },
+    {
+        "id": 8,
+        "name": "serverCommand",
+        "description": "Commande pour gérer le serveur depuis discord",
+        "active": true
+    },
+    {
+        "id": 9,
+        "name": "testCommand",
+        "description": "Commande test",
+        "active": true
+    }
+]

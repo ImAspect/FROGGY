@@ -12,6 +12,7 @@ module.exports = {
 		if (interaction.commandName === 'tickets') {
 			// ACTIVE
 			const active = require('../../config/active.json')
+			delete require.cache[require.resolve('../../config/active.json')]
 			let functions
 
 			active.map((x, index) => {

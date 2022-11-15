@@ -1,7 +1,6 @@
 const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
-const active = require('../../config/active.json')
 
 module.exports = {
     name: "functions",
@@ -85,7 +84,10 @@ module.exports = {
             // PERMISSIONS //
             // COMMAND ENABLE
             if (interaction.options._subcommand === 'enable') {
+                delete require.cache[require.resolve('../../config/active.json')]
+                const active = require('../../config/active.json')
                 const functions = []
+
                 active.map((x, index) => {
                     if (x.active === false) functions.push(x)
                 })
@@ -97,11 +99,11 @@ module.exports = {
                                 .setCustomId('function_enable')
                                 .setPlaceholder('Sélectionnez une fonctionnalité à activée !')
                                 .addOptions(
-                                    functions.map((x, index) => {
+                                    functions.map((x) => {
                                         return {
                                             label: x.name,
                                             description: `${x.description}`,
-                                            value: `function_enable_${index}`
+                                            value: `function_enable_${x.id}`
                                         }
                                     })
                                 )
@@ -120,7 +122,10 @@ module.exports = {
 
             // COMMAND DISABLE
             if (interaction.options._subcommand === 'disable') {
+                delete require.cache[require.resolve('../../config/active.json')]
+                const active = require('../../config/active.json')
                 const functions = []
+
                 active.map((x, index) => {
                     if (x.active === true) functions.push(x)
                 })
@@ -136,7 +141,7 @@ module.exports = {
                                         return {
                                             label: x.name,
                                             description: `${x.description}`,
-                                            value: `function_disable_${index}`
+                                            value: `function_disable_${x.id}`
                                         }
                                     })
                                 )

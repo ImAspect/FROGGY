@@ -10,6 +10,7 @@ module.exports = {
 
     console.log("🤖️ Bot [ " + client.user.tag + " ] ✅ ")
     // ACTIVE
+    delete require.cache[require.resolve('../config/active.json')]
     const active = require('../config/active.json')
     let functions
 

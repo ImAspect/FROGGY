@@ -7,6 +7,7 @@ module.exports = {
 	type: ApplicationCommandType.ChatInput,
 	run: async (client, interaction) => {
 		// ACTIVE
+		delete require.cache[require.resolve('../../config/active.json')]
 		const active = require('../../config/active.json')
 		let functions
 

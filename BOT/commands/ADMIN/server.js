@@ -1,7 +1,6 @@
 const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
-const { serverCommand } = require('../../config/active.json')
 const { soapCommand } = require('../../custom_modules/soapCommand')
 
 module.exports = {
@@ -91,6 +90,7 @@ module.exports = {
             // COMMAND RESTART
             if (interaction.options._subcommand === 'restart') {
                 // ACTIVE
+                delete require.cache[require.resolve('../../config/active.json')]
                 const active = require('../../config/active.json')
                 let functions
 

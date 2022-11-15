@@ -12,6 +12,7 @@ module.exports = {
     if (!member) return
 
     // ACTIVE
+    delete require.cache[require.resolve('../config/active.json')]
     const active = require('../config/active.json')
     let functions
 

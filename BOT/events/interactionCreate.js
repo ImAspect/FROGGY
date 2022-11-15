@@ -149,56 +149,89 @@ module.exports = {
               await interaction.reply({ embeds: [ticketEmbed], components: [ticketButtons], ephemeral: true })
             }
           })
-
       }
 
       // SELECT MENU FUNCTION ENABLE
       if (interaction.customId === 'function_enable') {
         const active = require('../config/active.json')
-        const functions = []
-
-        active.map((x, index) => {
-          if (x.active === false) functions.push(x)
-        })
-
         const interactionValues = interaction.values[0]
         const functionSplit = interactionValues.split("_")
         const functionId = JSON.parse(functionSplit[2])
-
-        functions[functionId].active = true
-
-        fs.writeFileSync('./config/active.json', JSON.stringify(functions))
-        const successConfig = new EmbedBuilder()
-          .setColor(EMBED_COLOR_TRANSPARENT)
-          .setDescription(`La fonctionnalité \`${functions[functionId].name}\` à bien été activée ! ✅`)
-          .setTimestamp()
-
-        await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
-      }
-
-      // SELECT MENU FUNCTION DISABLE
-      if (interaction.customId === 'function_disable') {
-        const active = require('../config/active.json')
-        const functions = []
-
-        active.map((x, index) => {
-          if (x.active === true) functions.push(x)
+        const dataTab = []
+  
+        await active.map((x) => {
+          if (functionId == x.id) {
+            const obj = {
+              "id": x.id,
+              "name": x.name,
+              "description": x.description,
+              "active": true
+            }
+            dataTab.push(obj)
+          }
+          if (functionId != x.id) {
+            const obj = {
+              "id": x.id,
+              "name": x.name,
+              "description": x.description,
+              "active": x.active
+            }
+            dataTab.push(obj)
+          }
         })
-
-        const interactionValues = interaction.values[0]
-        const functionSplit = interactionValues.split("_")
-        const functionId = JSON.parse(functionSplit[2])
-
-        functions[functionId].active = false
-
-        fs.writeFileSync('./config/active.json', JSON.stringify(functions))
+  
+        fs.writeFile('./config/active.json', JSON.stringify(dataTab), async (err) => {
+        if (err) throw err
+  
         const successConfig = new EmbedBuilder()
           .setColor(EMBED_COLOR_TRANSPARENT)
-          .setDescription(`La fonctionnalité \`${functions[functionId].name}\` à bien été désactivée ! ✅`)
+          .setDescription(`La fonctionnalité à bien été activée ! ✅`)
           .setTimestamp()
-
+  
         await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
+        })
       }
+    }
+
+    // SELECT MENU FUNCTION DISABLE
+    if (interaction.customId === 'function_disable') {
+      const active = require('../config/active.json')
+      const interactionValues = interaction.values[0]
+      const functionSplit = interactionValues.split("_")
+      const functionId = JSON.parse(functionSplit[2])
+      const dataTab = []
+
+      await active.map((x) => {
+        if (functionId == x.id) {
+          const obj = {
+            "id": x.id,
+            "name": x.name,
+            "description": x.description,
+            "active": false
+          }
+          dataTab.push(obj)
+        }
+        if (functionId != x.id) {
+          const obj = {
+            "id": x.id,
+            "name": x.name,
+            "description": x.description,
+            "active": x.active
+          }
+          dataTab.push(obj)
+        }
+      })
+
+      fs.writeFile('./config/active.json', JSON.stringify(dataTab), async (err) => {
+      if (err) throw err
+
+      const successConfig = new EmbedBuilder()
+        .setColor(EMBED_COLOR_TRANSPARENT)
+        .setDescription(`La fonctionnalité à bien été désactivée ! ✅`)
+        .setTimestamp()
+
+      await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
+      })
     }
 
     // BUTTONS
