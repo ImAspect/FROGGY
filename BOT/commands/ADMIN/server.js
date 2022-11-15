@@ -1,8 +1,7 @@
 const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
-const { SERVER_NAME } = require('../../config/server.json')
+const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
 const { soapCommand } = require('../../custom_modules/soapCommand')
-
 module.exports = {
     name: "server",
     description: "[ADMIN] Ensemble de commandes pour le groupe \"Server\" !",
@@ -32,6 +31,7 @@ module.exports = {
 
             let memberLogin
             let memberGm
+            const serverCore = SERVER_CORE
 
             await isLogin(interaction.member.id)
                 .then(async (res) => {
@@ -59,7 +59,6 @@ module.exports = {
                         memberGm = res
                     }
                 })
-
             if (memberGm === false) {
                 const memberNoGm = new EmbedBuilder()
                     .setColor(EMBED_COLOR_TRANSPARENT)
@@ -67,13 +66,24 @@ module.exports = {
                     .setTimestamp()
 
                 return await interaction.reply({ embeds: [memberNoGm], ephemeral: true })
-            } else if (memberGm[0].gmlevel != 3) {
-                const memberNoGmAdmin = new EmbedBuilder()
-                    .setColor(EMBED_COLOR_TRANSPARENT)
-                    .setDescription(`Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
-                    .setTimestamp()
+            } else if (serverCore === 'AC') {
+                if (memberGm[0].gmlevel != 3) {
+                    const memberNoGmAdmin = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
+                        .setTimestamp()
 
-                return await interaction.reply({ embeds: [memberNoGmAdmin], ephemeral: true })
+                    return await interaction.reply({ embeds: [memberNoGmAdmin], ephemeral: true })
+                }
+            } else if (serverCore === 'TC' || serverCore === 'SC') {
+                if (memberGm[0].SecurityLevel != 3) {
+                    const memberNoGmAdmin = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Les administrateurs **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
+                        .setTimestamp()
+
+                    return await interaction.reply({ embeds: [memberNoGmAdmin], ephemeral: true })
+                }
             }
             // PERMISSIONS //
             // COMMAND RESTART
@@ -82,7 +92,7 @@ module.exports = {
                 soapCommand(`server restart ${seconds}`)
                 const serverRestartSuccess = new EmbedBuilder()
                     .setColor(EMBED_COLOR_TRANSPARENT)
-                    .setDescription(`**Le serveur va redémarrer dans** \`${seconds}\` secondes !**`)
+                    .setDescription(`**Le serveur va redémarrer dans** \`${seconds}\` **secondes !**`)
                     .setTimestamp()
 
                 await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
@@ -90,4 +100,4 @@ module.exports = {
             }
         }
     }
-}
+};

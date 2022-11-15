@@ -1,4 +1,5 @@
 const { SOAP_PORT, SOAP_IP, SOAP_USER, SOAP_PASSWORD } = require('../config/soap.json')
+const { SERVER_CORE } = require('../config/server.json')
 
 function soapCommand(command) {
 	const http = require('http')
@@ -44,7 +45,7 @@ function soapCommand(command) {
 			' xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"' +
 			' xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"' +
 			' xmlns:xsd="http://www.w3.org/1999/XMLSchema"' +
-			' xmlns:ns1="urn:AC">' +
+			` ${SERVER_CORE === 'AC' ? 'xmlns:ns1="urn:AC">' : SERVER_CORE === 'TC' ? 'xmlns:ns1="urn:TC">' : SERVER_CORE === 'SC' && 'xmlns:ns1="urn:SC">'}` +
 			'<SOAP-ENV:Body>' +
 			'<ns1:executeCommand>' +
 			'<command>' + command + '</command>' +

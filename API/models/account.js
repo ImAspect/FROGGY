@@ -57,7 +57,7 @@ class accountModels {
 	}
 
 	static async getAccountAccessById(id) {
-		return db.query(`SELECT * FROM ${config.get('mysql.authDatabase')}.account_access WHERE id = ?`, [id])
+		return db.query(`SELECT * FROM ${config.get('mysql.authDatabase')}.account_access WHERE ${config.get('core') === 'AC' ? 'id = ?' : config.get('core') === 'TC' || config.get('core') === 'SC' && 'AccountId = ?'}`, [id])
 		.then((result) => {
 			return result
 		})
