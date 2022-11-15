@@ -1,7 +1,9 @@
 const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
 const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
 const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
+const { serverCommand } = require('../../config/active.json')
 const { soapCommand } = require('../../custom_modules/soapCommand')
+
 module.exports = {
     name: "server",
     description: "[ADMIN] Ensemble de commandes pour le groupe \"Server\" !",
@@ -88,15 +90,35 @@ module.exports = {
             // PERMISSIONS //
             // COMMAND RESTART
             if (interaction.options._subcommand === 'restart') {
-                let seconds = interaction.options._hoistedOptions[0].value
-                soapCommand(`server restart ${seconds}`)
-                const serverRestartSuccess = new EmbedBuilder()
-                    .setColor(EMBED_COLOR_TRANSPARENT)
-                    .setDescription(`**Le serveur va redémarrer dans** \`${seconds}\` **secondes !**`)
-                    .setTimestamp()
+                // ACTIVE
+                const active = require('../../config/active.json')
+                let functions
 
-                await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
+                active.map((x, index) => {
+                    if (x.active === true && x.name === 'serverCommand') {
+                        functions = true
+                    } else {
+                        functions = false
+                    }
+                })
+                //ACTIVE
+                if (functions === true) {
+                    let seconds = interaction.options._hoistedOptions[0].value
+                    soapCommand(`server restart ${seconds}`)
+                    const serverRestartSuccess = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`**Le serveur va redémarrer dans** \`${seconds}\` **secondes !** ✅`)
+                        .setTimestamp()
 
+                    await interaction.reply({ embeds: [serverRestartSuccess], ephemeral: true })
+                } else {
+                    const commandDisable = new EmbedBuilder()
+                        .setColor(EMBED_COLOR_TRANSPARENT)
+                        .setDescription(`Cette fonctionnalité n'est pas active ! ❌`)
+                        .setTimestamp()
+
+                    await interaction.reply({ embeds: [commandDisable], ephemeral: true })
+                }
             }
         }
     }

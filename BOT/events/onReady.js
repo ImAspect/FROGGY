@@ -9,10 +9,23 @@ module.exports = {
     await client.application.commands.set(slashCommands)
 
     console.log("🤖️ Bot [ " + client.user.tag + " ] ✅ ")
+    // ACTIVE
+    const active = require('../config/active.json')
+    let functions
 
-    client.user.setPresence({
-      activities: [{ name: `${SERVER_NAME}`, type: ActivityType.Playing }],
-      status: 'online',
+    active.map((x, index) => {
+      if (x.active === true && x.name === 'onReadyPresence') {
+        functions = true
+      } else {
+        functions = false
+      }
     })
+    //ACTIVE
+    if (functions === true) {
+      client.user.setPresence({
+        activities: [{ name: `${SERVER_NAME}`, type: ActivityType.Playing }],
+        status: 'online',
+      })
+    }
   }
 }

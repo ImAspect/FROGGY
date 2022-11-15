@@ -1,6 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, SelectMenuBuilder } = require('discord.js')
 const moment = require('moment')
 moment.locale('fr')
+const fs = require("fs")
 const { getAccountIdByCharacterGuid } = require('../Api/account')
 const { getCharacterByGuid, getCharactersByAccountId } = require('../Api/characters')
 const { getTicketById } = require('../Api/tickets')
@@ -149,6 +150,54 @@ module.exports = {
             }
           })
 
+      }
+
+      // SELECT MENU FUNCTION ENABLE
+      if (interaction.customId === 'function_enable') {
+        const active = require('../config/active.json')
+        const functions = []
+
+        active.map((x, index) => {
+          if (x.active === false) functions.push(x)
+        })
+
+        const interactionValues = interaction.values[0]
+        const functionSplit = interactionValues.split("_")
+        const functionId = JSON.parse(functionSplit[2])
+
+        functions[functionId].active = true
+
+        fs.writeFileSync('./config/active.json', JSON.stringify(functions))
+        const successConfig = new EmbedBuilder()
+          .setColor(EMBED_COLOR_TRANSPARENT)
+          .setDescription(`La fonctionnalité \`${functions[functionId].name}\` à bien été activée ! ✅`)
+          .setTimestamp()
+
+        await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
+      }
+
+      // SELECT MENU FUNCTION DISABLE
+      if (interaction.customId === 'function_disable') {
+        const active = require('../config/active.json')
+        const functions = []
+
+        active.map((x, index) => {
+          if (x.active === true) functions.push(x)
+        })
+
+        const interactionValues = interaction.values[0]
+        const functionSplit = interactionValues.split("_")
+        const functionId = JSON.parse(functionSplit[2])
+
+        functions[functionId].active = false
+
+        fs.writeFileSync('./config/active.json', JSON.stringify(functions))
+        const successConfig = new EmbedBuilder()
+          .setColor(EMBED_COLOR_TRANSPARENT)
+          .setDescription(`La fonctionnalité \`${functions[functionId].name}\` à bien été désactivée ! ✅`)
+          .setTimestamp()
+
+        await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
       }
     }
 
