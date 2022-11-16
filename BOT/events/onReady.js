@@ -1,10 +1,10 @@
+import { ActivityType } from 'discord.js'
+import { SERVER_NAME } from '../config/server.json'
+
 module.exports = {
   name: "ready",
   emiter: "on",
   run: async (client) => {
-    const { ActivityType } = require('discord.js')
-    const { SERVER_NAME } = require('../config/server.json')
-
     var slashCommands = client.slashCommands.map(x => x)
     await client.application.commands.set(slashCommands)
 

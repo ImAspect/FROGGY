@@ -1,27 +1,25 @@
 module.exports = (_db) => {
-    db = _db
-    return ticketsModels
+	db = _db
+	return ticketsModels
 }
 
 const config = require('config')
 class ticketsModels {
 	static async getAllTickets() {
-		return db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE completed = 0 LIMIT 10`)
-		.then((result) => {
+		try {
+			const result = await db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE completed = 0 LIMIT 10`)
 			return result
-		})
-		.catch((err) => {
+		} catch (err) {
 			return err
-		})
+		}
 	}
 
 	static async getTicketById(id) {
-		return db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE id = ? && completed = 0`, [id])
-		.then((result) => {
+		try {
+			const result = await db.query(`SELECT * FROM ${config.get('mysql.charsDatabase')}.gm_ticket WHERE id = ? && completed = 0`, [id])
 			return result
-		})
-		.catch((err) => {
+		} catch (err) {
 			return err
-		})
+		}
 	}
 }

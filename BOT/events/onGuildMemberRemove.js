@@ -1,9 +1,9 @@
-const { AttachmentBuilder, EmbedBuilder } = require('discord.js')
-const Canvas = require('@napi-rs/canvas')
-const { GlobalFonts, Image } = require('@napi-rs/canvas')
-const { join } = require('path')
-const { request } = require('undici')
-const { LEFT_CHANNEL_ID, EMBED_COLOR_TRANSPARENT } = require('../config/discord.json')
+import { AttachmentBuilder, EmbedBuilder } from 'discord.js'
+import Canvas from '@napi-rs/canvas'
+import { GlobalFonts, Image } from '@napi-rs/canvas'
+import { join } from 'path'
+import { request } from 'undici'
+import { LEFT_CHANNEL_ID, EMBED_COLOR_TRANSPARENT } from '../config/discord.json'
 
 module.exports = {
   name: "guildMemberRemove",

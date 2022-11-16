@@ -1,7 +1,7 @@
-const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { getAllTickets } = require('../../api/tickets')
-const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
-const { SERVER_NAME } = require('../../config/server.json')
+import { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } from 'discord.js'
+import { getAllTickets } from '../../api/tickets'
+import { EMBED_COLOR_TRANSPARENT } from '../../config/discord.json'
+import { SERVER_NAME } from '../../config/server.json'
 
 module.exports = {
 	name: "tickets",
@@ -48,7 +48,7 @@ module.exports = {
 						.setDescription(`Vous n'êtes pas connecté à un compte **${SERVER_NAME}** ❌\n\nVeuillez utiliser la commande \`/account login <username> <password>\` pour vous connecter !`)
 						.setTimestamp()
 
-					return await interaction.reply({ embeds: [memberNoLogin], ephemeral: true })
+					return await interaction.update({ embeds: [memberNoLogin], ephemeral: true })
 				}
 
 				await isGm(memberLogin[0].accountId)
@@ -66,7 +66,7 @@ module.exports = {
 						.setDescription(`L'équipe **${SERVER_NAME}** sont les seuls à pouvoir accéder aux commandes \`${interaction.commandName}\` ❌`)
 						.setTimestamp()
 
-					return await interaction.reply({ embeds: [memberNoGm], ephemeral: true })
+					return await interaction.update({ embeds: [memberNoGm], ephemeral: true })
 				}
 				// PERMISSIONS //
 				await getAllTickets()

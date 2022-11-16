@@ -1,7 +1,7 @@
-const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
-const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
-const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
-const { soapCommand } = require('../../custom_modules/soapCommand')
+import { ApplicationCommandType, EmbedBuilder } from 'discord.js'
+import { EMBED_COLOR_TRANSPARENT } from '../../config/discord.json'
+import { SERVER_NAME, SERVER_CORE } from '../../config/server.json'
+import { soapCommand } from '../../custom_modules/soapCommand'
 
 module.exports = {
     name: "server",

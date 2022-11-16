@@ -1,5 +1,5 @@
-const { ApplicationCommandType, EmbedBuilder } = require('discord.js')
-const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
+import { ApplicationCommandType, EmbedBuilder } from 'discord.js'
+import { EMBED_COLOR_TRANSPARENT } from '../../config/discord.json'
 
 module.exports = {
 	name: "test",

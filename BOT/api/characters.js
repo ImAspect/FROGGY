@@ -1,25 +1,19 @@
-const axios = require('axios')
-const { API_URL } = require('../config/api.json')
+import axios from 'axios'
+import { API_URL } from '../config/api.json'
 
-const getAllCharactersByDiscordId = (data) => {
-    return axios.get(API_URL+`/api/characters/discord/${data}`)
-    .then((response) => {
-        return response.data
-    })
+const getAllCharactersByDiscordId = async (data) => {
+    const response = await axios.post(`${API_URL}/api/characters/discord/${data}`)
+    return response.data
 }
 
-const getCharacterByGuid = (data) => {
-    return axios.get(API_URL+`/api/character/${data}`)
-    .then((response) => {
-        return response.data
-    })
+const getCharacterByGuid = async (data) => {
+    const response = await axios.post(`${API_URL}/api/character/${data}`)
+    return response.data
 }
 
-const getCharactersByAccountId = (accountId) => {
-    return axios.get(API_URL+`/api/characters/all/${accountId}`)
-    .then((response) => {
-        return response.data
-    })
+const getCharactersByAccountId = async (accountId) => {
+    const response = await axios.post(`${API_URL}/api/characters/all/${accountId}`)
+    return response.data
 }
 
 module.exports = {

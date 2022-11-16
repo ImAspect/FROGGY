@@ -1,4 +1,4 @@
-const { getAccountVerifiedByDiscordId } = require('../api/account')
+import { getAccountVerifiedByDiscordId } from '../api/account'
 
 async function isLogin(discordId) {
     let verified

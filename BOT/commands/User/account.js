@@ -1,9 +1,9 @@
-const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { createAccount, loginAccount } = require('../../api/account')
-const { getAllCharactersByDiscordId } = require('../../api/characters')
-const { getClassByGender, getRaceByGender } = require('../../custom_modules/getByGender')
-const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
-const { SERVER_NAME } = require('../../config/server.json')
+import { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } from 'discord.js'
+import { createAccount, loginAccount } from '../../api/account'
+import { getAllCharactersByDiscordId } from '../../api/characters'
+import { getClassByGender, getRaceByGender } from '../../custom_modules/getByGender'
+import { EMBED_COLOR_TRANSPARENT } from '../../config/discord.json'
+import { SERVER_NAME } from '../../config/server.json'
 
 module.exports = {
     name: "account",
@@ -260,7 +260,6 @@ module.exports = {
                     }
                 })
                 //ACTIVE
-                console.log(functions)
                 if (functions === true) {
                     if (memberLogin !== false) {
                         getAllCharactersByDiscordId(interaction.member.id)

@@ -1,11 +1,13 @@
-module.exports = (app, db) => {
-    const crypto = require('crypto')
-    const { createVerifier } = require('../custom_modules/SRP6')
+import crypto from 'crypto'
+import { createVerifier } from '../custom_modules/SRP6'
 
+module.exports = (app, db) => {
     app.post('/api/account/add', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
+
         const account = await accountModels.getAccountByUsername(req.body.username)
         const accountEmail = await accountModels.getAccountByEmail(req.body.email)
+        
         const validateEmail = (email) => {
             return String(email)
                 .toLowerCase()
@@ -82,7 +84,7 @@ module.exports = (app, db) => {
         if (result.length === 0) {
             return res.json({ status: 400, result: false })
         }
-        
+
         if (result.length === 1) {
             return res.json({ status: 200, result: result })
         }
@@ -91,11 +93,11 @@ module.exports = (app, db) => {
     app.get('/api/account/access/:id', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
         const result = await accountModels.getAccountAccessById(req.params.id)
-        
+
         if (result.length === 0) {
             return res.json({ status: 400, result: false })
         }
-        
+
         if (result.length === 1) {
             return res.json({ status: 200, result: result })
         }
@@ -104,7 +106,7 @@ module.exports = (app, db) => {
     app.get('/api/account/character/:guid', async (req, res, next) => {
         const accountModels = require('../models/account')(db)
         const getAccountIdByCharacterGuid = await accountModels.getAccountIdByCharacterGuid(req.params.guid)
-        
+
         if (getAccountIdByCharacterGuid.code) {
             return res.json({ status: 500, err: getAccountIdByCharacterGuid.code })
         }

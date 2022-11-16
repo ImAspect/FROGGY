@@ -1,39 +1,29 @@
-const axios = require('axios')
-const { API_URL } = require('../config/api.json')
+import axios from 'axios'
+import { API_URL } from '../config/api.json'
 
-const createAccount = (data) => {
-    return axios.post(API_URL+'/api/account/add', data)
-    .then((response) => {
-        return response.data
-    })
+const createAccount = async (data) => {
+    const response = await axios.post(`${API_URL}/api/account/add`, data)
+    return response.data
 }
 
-const loginAccount = (data) => {
-    return axios.post(API_URL+'/api/account/discord/login', data)
-    .then((response) => {
-        return response.data
-    })
+const loginAccount = async (data) => {
+    const response = await axios.post(`${API_URL}/api/account/discord/login`, data)
+    return response.data
 }
 
-const getAccountVerifiedByDiscordId = (data) => {
-    return axios.get(API_URL+`/api/account/discord/${data}`)
-    .then((response) => {
-        return response.data
-    })
+const getAccountVerifiedByDiscordId = async (data) => {
+    const response = await axios.post(`${API_URL}/api/account/discord/${data}`)
+    return response.data
 }
 
-const getAccountAccessById = (data) => {
-    return axios.get(API_URL+`/api/account/access/${data}`)
-    .then((response) => {
-        return response.data
-    })
+const getAccountAccessById = async (data) => {
+    const response = await axios.post(`${API_URL}/api/account/access/${data}`)
+    return response.data
 }
 
-const getAccountIdByCharacterGuid = (data) => {
-    return axios.get(API_URL+`/api/account/character/${data}`)
-    .then((response) => {
-        return response.data
-    })
+const getAccountIdByCharacterGuid = async (data) => {
+    const response = await axios.post(`${API_URL}/api/account/character/${data}`)
+    return response.data
 }
 
 module.exports = {

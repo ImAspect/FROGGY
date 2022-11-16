@@ -1,6 +1,6 @@
-const { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js')
-const { EMBED_COLOR_TRANSPARENT } = require('../../config/discord.json')
-const { SERVER_NAME, SERVER_CORE } = require('../../config/server.json')
+import { ApplicationCommandType, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder } from ('discord.js')
+import { EMBED_COLOR_TRANSPARENT } from '../../config/discord.json'
+import { SERVER_NAME, SERVER_CORE } from '../../config/server.json'
 
 module.exports = {
     name: "functions",

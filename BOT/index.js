@@ -1,6 +1,6 @@
-const Discord = require("discord.js")
-const { TOKEN_BOT } = require("./config/discord.json")
-const { readdirSync } = require("node:fs")
+import Discord from 'discord.js'
+import { TOKEN_BOT } from './config/discord.json'
+import { readdirSync } from 'node:fs'
 
 const client = new Discord.Client({
   intents: new Discord.IntentsBitField(3276799)

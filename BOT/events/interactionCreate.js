@@ -1,15 +1,15 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, SelectMenuBuilder } = require('discord.js')
-const moment = require('moment')
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, SelectMenuBuilder } from 'discord.js'
+import moment from 'moment'
 moment.locale('fr')
-const fs = require("fs")
-const { getAccountIdByCharacterGuid } = require('../Api/account')
-const { getCharacterByGuid, getCharactersByAccountId } = require('../Api/characters')
-const { getTicketById } = require('../Api/tickets')
-const { getClassByGender, getRaceByGender } = require('../custom_modules/getByGender')
-const { convertSecondsToTime } = require('../custom_modules/convertSecondsToTime')
-const { convertMoney } = require('../custom_modules/convertMoney')
-const { soapCommand } = require('../custom_modules/soapCommand')
-const { EMBED_COLOR_TRANSPARENT } = require('../config/discord.json')
+import fs from "fs"
+import { getAccountIdByCharacterGuid } from '../Api/account'
+import { getCharacterByGuid, getCharactersByAccountId } from '../Api/characters'
+import { getTicketById } from '../Api/tickets'
+import { getClassByGender, getRaceByGender } from '../custom_modules/getByGender'
+import { convertSecondsToTime } from '../custom_modules/convertSecondsToTime'
+import { convertMoney } from '../custom_modules/convertMoney'
+import { soapCommand } from '../custom_modules/soapCommand'
+import { EMBED_COLOR_TRANSPARENT } from '../config/discord.json'
 
 module.exports = {
   name: "interactionCreate",
@@ -55,7 +55,7 @@ module.exports = {
           .setDescription(`**Le ticket n°**\`${ticketId}\` **est maintenant assigné au Maître du jeu** \`${gmAssign}\``)
           .setTimestamp()
 
-        await interaction.reply({ embeds: [ticketAssignEmbed], ephemeral: true })
+        await interaction.update({ embeds: [ticketAssignEmbed], ephemeral: true })
       }
 
       // SELECT MENU CHARACTERS
@@ -78,7 +78,7 @@ module.exports = {
                   { name: 'Création', value: `• \`${moment(res.result[0].creation_date).format('LLLL')}\``, inline: false }
                 )
                 .setTimestamp()
-              await interaction.reply({ embeds: [characterEmbed], ephemeral: true })
+              await interaction.update({ embeds: [characterEmbed], ephemeral: true })
             }
           })
       }
@@ -146,7 +146,7 @@ module.exports = {
                       .setDisabled(true),
                   )
               }
-              await interaction.reply({ embeds: [ticketEmbed], components: [ticketButtons], ephemeral: true })
+              await interaction.update({ embeds: [ticketEmbed], components: [ticketButtons], ephemeral: true })
             }
           })
       }
@@ -158,7 +158,7 @@ module.exports = {
         const functionSplit = interactionValues.split("_")
         const functionId = JSON.parse(functionSplit[2])
         const dataTab = []
-  
+
         await active.map((x) => {
           if (functionId == x.id) {
             const obj = {
@@ -179,16 +179,16 @@ module.exports = {
             dataTab.push(obj)
           }
         })
-  
+
         fs.writeFile('./config/active.json', JSON.stringify(dataTab), async (err) => {
-        if (err) throw err
-  
-        const successConfig = new EmbedBuilder()
-          .setColor(EMBED_COLOR_TRANSPARENT)
-          .setDescription(`La fonctionnalité à bien été activée ! ✅`)
-          .setTimestamp()
-  
-        await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
+          if (err) throw err
+
+          const successConfig = new EmbedBuilder()
+            .setColor(EMBED_COLOR_TRANSPARENT)
+            .setDescription(`La fonctionnalité à bien été activée ! ✅`)
+            .setTimestamp()
+
+          await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
         })
       }
     }
@@ -223,14 +223,14 @@ module.exports = {
       })
 
       fs.writeFile('./config/active.json', JSON.stringify(dataTab), async (err) => {
-      if (err) throw err
+        if (err) throw err
 
-      const successConfig = new EmbedBuilder()
-        .setColor(EMBED_COLOR_TRANSPARENT)
-        .setDescription(`La fonctionnalité à bien été désactivée ! ✅`)
-        .setTimestamp()
+        const successConfig = new EmbedBuilder()
+          .setColor(EMBED_COLOR_TRANSPARENT)
+          .setDescription(`La fonctionnalité à bien été désactivée ! ✅`)
+          .setTimestamp()
 
-      await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
+        await interaction.update({ embeds: [successConfig], components: [], ephemeral: true })
       })
     }
 
@@ -245,23 +245,31 @@ module.exports = {
         await getCharactersByAccountId(memberLogin[0].accountId)
           .then(async (res) => {
             if (res.status === 200) {
-              const assignSucces = new ActionRowBuilder()
-                .addComponents(
-                  new SelectMenuBuilder()
-                    .setCustomId('select_assign_chars')
-                    .setPlaceholder('Assigner le ticket à l\'un de vos personnages')
-                    .addOptions(
-                      res.result.map((x, index) => {
-                        return {
-                          label: `${x.name}`,
-                          description: `  `,
-                          value: `${x.name}_${ticketId}`,
-                        }
-                      })
-                    ),
-                );
+              if (res.result.length > 0) {
+                const assignSucces = new ActionRowBuilder()
+                  .addComponents(
+                    new SelectMenuBuilder()
+                      .setCustomId('select_assign_chars')
+                      .setPlaceholder('Assigner le ticket à l\'un de vos personnages')
+                      .addOptions(
+                        res.result.map((x, index) => {
+                          return {
+                            label: `${x.name}`,
+                            description: `  `,
+                            value: `${x.name}_${ticketId}`,
+                          }
+                        })
+                      ),
+                  );
 
-              await interaction.reply({ components: [assignSucces], ephemeral: true })
+                await interaction.update({ components: [assignSucces], ephemeral: true })
+              } else {
+                const noCharacters = new EmbedBuilder()
+                .setColor(EMBED_COLOR_TRANSPARENT)
+                .setDescription("Vous n'avez pas de personnage sur votre compte ! ❌")
+                .setTimestamp()
+              await interaction.update({ embeds: [noCharacters], components: [], ephemeral: true })
+              }
             }
           })
 
@@ -299,13 +307,13 @@ module.exports = {
         soapCommand('reload gm_tickets')
         const ticketResponse = new EmbedBuilder()
           .setColor(EMBED_COLOR_TRANSPARENT)
-          .setDescription('\`La réponse à bien été envoyer\`')
+          .setDescription('La réponse à bien été envoyer ✔️')
           .addFields(
             { name: 'Ticket n°', value: `• \`${ticketId}\``, inline: false },
             { name: 'Réponse', value: `• \`${responseToTicket}\``, inline: false }
           )
           .setTimestamp()
-        await interaction.reply({ embeds: [ticketResponse], ephemeral: true })
+        await interaction.update({ embeds: [ticketResponse], ephemeral: true })
       }
     }
   }

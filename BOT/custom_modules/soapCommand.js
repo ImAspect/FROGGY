@@ -1,5 +1,5 @@
-const { SOAP_PORT, SOAP_IP, SOAP_USER, SOAP_PASSWORD } = require('../config/soap.json')
-const { SERVER_CORE } = require('../config/server.json')
+import { SOAP_PORT, SOAP_IP, SOAP_USER, SOAP_PASSWORD } from '../config/soap.json'
+import { SERVER_CORE } from '../config/server.json'
 
 function soapCommand(command) {
 	const http = require('http')

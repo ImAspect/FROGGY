@@ -1,9 +1,9 @@
 // ON INITIALISE NOS MODULES
-const express = require('express')
+import express from 'express'
+import config from 'config'
+import cors from 'cors'
+import mysql from 'promise-mysql'
 const app = express()
-const config = require('config')
-const cors = require('cors')
-const mysql = require('promise-mysql')
 
 // ON LIE EXPRESS ET SES MODULES
 app.use(cors())
